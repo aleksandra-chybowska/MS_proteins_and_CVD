@@ -3,7 +3,21 @@
   <component name="CsvFileAttributes">
     <option name="attributeMap">
       <map>
+        <entry key="C:\Users\s1654019\AppData\Local\mambaforge\envs\scikitlearn\Lib\site-packages\matplotlib\mpl-data\sample_data\Stocks.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\disease\cvd_deaths.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\scores\GS_score2_export.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -32,6 +46,13 @@
           </value>
         </entry>
         <entry key="\results\proteins_that_vary_with_pill.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\proteins_that_vary_with_pill_bonf_corrected.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

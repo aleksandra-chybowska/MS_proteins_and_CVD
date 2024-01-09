@@ -106,4 +106,3 @@ for outcome in dis_list:
     out["age_at_event"] = out.age + out.tte
     out.to_csv(f"{output}/{flag}_{outcome}.csv", na_rep='NA', index=False)
 
-# napisz sobie modul z plotami :)
