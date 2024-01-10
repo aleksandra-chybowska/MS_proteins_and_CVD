@@ -36,12 +36,6 @@ cox = cox[['id', 'age', 'sex', 'avg_sys', 'Total_cholesterol',
            'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y', 'diabetes_Y',
            'bmi', 'years', 'rank', 'event', 'tte']]  # 17529
 cox.set_index("id", inplace=True)
-# cox["sex"] = pd.Categorical(cox["sex"], categories=['F', 'M'])
-# encoder = OneHotEncoder()
-# encoder.fit(cox)
-# cox = encoder.transform(cox)
-# cox = cox.rename(columns={"sex=M": "sex"})
-
 cox['sex'] = cox['sex'].replace({'M': 1, 'F': 0})
 
 # %%
