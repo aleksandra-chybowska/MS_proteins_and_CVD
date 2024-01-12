@@ -38,6 +38,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\cox\hosp\hosp_myocardial_infarction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\cox\hosp\hosp_tia.csv">
           <value>
             <Attribute>

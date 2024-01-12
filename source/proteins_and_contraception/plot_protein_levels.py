@@ -1,7 +1,5 @@
 # %%
 import pyreadr
-import pandas as pd
-import os
 from lib.parquet_helper import read_parquet
 from plotnine import ggplot, aes, labs, geom_boxplot
 from lib.pca import *

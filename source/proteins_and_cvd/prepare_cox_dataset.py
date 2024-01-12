@@ -3,16 +3,17 @@ import pyreadr
 import pandas as pd
 import lib.string_date as sd
 from lib.cox import get_time_to_event
-
+from lib.parquet_helper import read_parquet
 
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 annots = pd.read_csv("data/annotations/short_annots.csv")
 pill = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_v2v5combined.txt")
 dictionary = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_datadictionary.txt")
 medications = pd.read_table("data/disease/medications/all_CVD_prescriptions.txt")
-pheno = pyreadr.read_r("data/phenotypes/GS_phenos_internal_with_DST_28Nov2023_REM.rds")[None]
+pheno = pyreadr.read_r("data/phenotypes/GS_phenos_internal_with_DST_28Nov2023_REM.rds")[None]  # 24079
 deaths = pd.read_csv("data/phenotypes/2023-08-23_deaths.csv")
 diseases = pd.read_csv("data/phenotypes/2023-08-22_disease_codes_combined.csv")
+females = read_parquet("data/transformed_input/females_on_pill.parquet")
 
 flag = "hosp"  # hosp, hosp_gp_cons, hosp_gp
 output = f"results/cox/{flag}/"
@@ -22,7 +23,16 @@ pheno["gs_appt"] = pheno.apply(lambda row: sd.year_month_to_date(row["y_appt"], 
 pheno = pheno[["id", "gs_appt", "age", "sex", "avg_sys", "Total_cholesterol",
                "HDL_cholesterol", "pack_years", "rheum_arthritis_Y", "diabetes_Y",
                "bmi", "years", "rank"]]
-pheno = pheno.dropna()
+pheno = pheno.dropna()  # 17529
+
+# %%
+females = females[["id", "on_pill"]]  # 13419
+pheno = pd.merge(pheno, females, on="id", how="left")
+pheno["on_pill"].value_counts(dropna=False)  # 7669 NaNs
+pheno.loc[pheno["sex"] == "M", "on_pill"] = 0
+pheno["on_pill"].value_counts(dropna=False)  # 379 NaNs - females that had missing info for contraception
+pd.crosstab(index=pheno["sex"], columns=pheno["on_pill"])
+pheno = pheno.dropna()  # 17150
 
 # %%
 deaths = deaths.drop_duplicates(subset='id')
@@ -40,7 +50,7 @@ cvd_deaths = pd.DataFrame({"id": pepsi["id"],
                            "Source": ["Secondary_Care"] * len(pepsi),
                            "GP_Consent": [1] * len(pepsi)
                            })
-cvd_deaths = cvd_deaths.drop_duplicates(subset='id')  # one issue fixed, 693 cvd_deaths
+cvd_deaths = cvd_deaths.drop_duplicates(subset='id')  # one issue fixed, 693 cvd_deaths w/o pill, 469 w/ pill
 
 score2 = pd.read_csv("data/scores/GS_score2_export.csv")
 score2.value_counts(score2['notes'], dropna=False)
@@ -74,12 +84,12 @@ cvd = cvd.loc[~((cvd["Disease"] == "hf") & (cvd["Source"] == "Primary_Care"))]  
 cvd.loc[cvd["Disease"] == "hf", "Source"].value_counts()
 cvd = pd.concat([cvd, cvd_deaths], ignore_index=True)
 composite = cvd.query('Disease in ["isch_stroke", "chd_nos", "myocardial_infarction", "CVD_death"]').copy()
-composite["Disease"] = "composite_CVD"  # 2221
+composite["Disease"] = "composite_CVD"  # 4776
 
 # %%
 
 cvd = pd.concat([cvd, composite], ignore_index=True)
-cvd = cvd.query('incident == 1')  # 6074
+cvd = cvd.query('incident == 1')  # 6933
 
 if flag == "hosp":
     cvd = cvd.query('Source == "Secondary_Care"')

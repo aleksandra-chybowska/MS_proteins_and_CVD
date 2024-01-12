@@ -20,7 +20,6 @@ interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
 event = interesting_events[0]
 
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
-proteins.set_index("id", inplace=True)
 path = f"results/incremental_models/{run}/{flag}"
 cox_path = f"results/cox/{flag}/{flag}_{event}.csv"
 
@@ -34,7 +33,7 @@ cox = pd.read_csv(cox_path)
 # this dataset requires more risk factors (family history of CVD left) - as mentioned above
 cox = cox[['id', 'age', 'sex', 'avg_sys', 'Total_cholesterol',
            'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y', 'diabetes_Y',
-           'bmi', 'years', 'rank', 'event', 'tte']]  # 17529
+           'bmi', 'years', 'rank', 'event', 'tte', 'on_pill']]  # 17529
 cox.set_index("id", inplace=True)
 cox['sex'] = cox['sex'].replace({'M': 1, 'F': 0})
 

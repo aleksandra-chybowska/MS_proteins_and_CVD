@@ -10,8 +10,10 @@ proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Au
 annots = pd.read_csv("data/annotations/short_annots.csv")
 pill = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_v2v5combined.txt")
 
-
 # %%
+# Dataset for the first experiment - females only (lm) -
+# scaled_protein ~ age + cont(0/1)
+
 females = pd.merge(pheno, pill, on="id")
 females = females[females.sex == "F"]
 females = females[~np.isnan(females.taken_cont)]
@@ -22,18 +24,22 @@ females = females[cols]
 females["on_pill"] = females.apply(
     lambda row: get_on_pill(row.taken_cont, row.age, row.age_started_cont, row.years_taking_cont), axis=1)
 
-females = pd.merge(females, proteins, on="id")
+path = "data/transformed_input/females_on_pill.parquet"
+write_parquet(females, path)
+print(f"Females: dataset prepared: {path}")
 
+# %%
+females = pd.merge(females, proteins, on="id")
 # scaling
 cols = proteins.columns[1:]
 females[cols] = scale(females[cols])
 
 # %%
-path = "results/incremental_models/plot_data/females_and_proteins_scaled.parquet"
+path = "data/transformed_input/females_and_proteins_scaled.parquet"
 write_parquet(females, path)
-print(f"Dataset prepared: {path}")
+print(f"Females: dataset prepared: {path}")
 
-
+path = "results/incremental_models/plot_data/females_and_proteins_scaled.parquet"
 # quick test - it was ok
 
 # sc = StandardScaler(with_mean=True)
