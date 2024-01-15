@@ -4,58 +4,57 @@
 #       total cholesterol, HDL-cholesterol, LDL-cholesterol, pack years of smoking, family history of CVD,
 #       rheumatoid arthritis, diabetes, BMI, years of education, SIMD score) and individual protein abundance.
 import os
-import pyreadr
 import pandas as pd
-import numpy as np
 from lifelines import CoxPHFitter
 from lifelines.statistics import proportional_hazard_test
-from lib.pandas_ext import two_dfs_merge
+from lib.parquet_helper import read_parquet
 import lib.stats as stats
 
 
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
 run = "agesex"
+proteins = read_parquet("data/transformed_input/cox_analysis_proteins_scaled_13374.parquet")
+
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
                       "tia", "composite_CVD", "CVD_death"]
 event = interesting_events[0]
-
-proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 path = f"results/incremental_models/{run}/{flag}"
-cox_path = f"results/cox/{flag}/{flag}_{event}.csv"
 
 if not os.path.exists(path):
     os.makedirs(path)
     print(f"Path: {path} created!")
 
-# for event in interesting_events:
 
+cox_path = f"results/cox/{flag}/{flag}_{event}.csv"
 cox = pd.read_csv(cox_path)
 # this dataset requires more risk factors (family history of CVD left) - as mentioned above
 cox = cox[['id', 'age', 'sex', 'avg_sys', 'Total_cholesterol',
            'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y', 'diabetes_Y',
-           'bmi', 'years', 'rank', 'event', 'tte', 'on_pill']]  # 17529
-cox.set_index("id", inplace=True)
+           'bmi', 'years', 'rank', 'event', 'tte', 'on_pill']]
+
 cox['sex'] = cox['sex'].replace({'M': 1, 'F': 0})
 
+df = pd.merge(cox, proteins, on="id")  # 13374
+
 # %%
-# so much work just to find out I need a merged dataframe xD
-cox, proteins = two_dfs_merge(cox, proteins)
-
-sc = StandardScaler(with_mean=True)
-sc.fit(proteins)
-sc.scale_ = np.std(proteins, axis=0, ddof=1).to_list()
-sc.transform(proteins)
-
 hazard_ratios = pd.DataFrame()
 concordance = pd.DataFrame()
 
-protein_name = "Total_cholesterol"
+df = df.query('age < 69 and age > 30')
 
 cph = CoxPHFitter()
-cph.fit(cox, duration_col='tte', event_col='event', formula=f"age+sex")
-test = proportional_hazard_test(cph, cox, time_transform="rank")
+cph.fit(df, duration_col='tte', event_col='event', formula=f"age+sex")
+test = proportional_hazard_test(cph, df, time_transform="km")
+
+
+
+
+# %%
+
+protein_name = "Total_cholesterol"
+
 # R uses the default `km`, we use `rank`, as this performs well versus other transforms.
- ## age does not meet PH assumptions
+## age does not meet PH assumptions
 
 
 # %%
