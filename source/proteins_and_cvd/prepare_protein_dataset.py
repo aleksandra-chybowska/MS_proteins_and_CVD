@@ -6,9 +6,10 @@ from lifelines import CoxPHFitter
 from lifelines.statistics import proportional_hazard_test
 from lib.stats import scale, summary
 from lib.pandas_ext import two_dfs_merge
-from lib.parquet_helper import write_parquet, read_parquet
+from lib.parquet_helper import write_parquet
+from lib.outliers import outlier_trim
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+
 
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
@@ -25,8 +26,9 @@ proteins.set_index("id", inplace=True)
 
 cox, proteins = two_dfs_merge(cox, proteins)  # both 13374 records, need to recalculate events
 indexes = cox.index
+
 #%%
-# first, lets see if the basic models meet cox assumptions and if not, lets fix them
+# prep for cvd ~ age + sex + protein + risk_factors + on_pill
 for event in interesting_events:
     cox_path = f"results/cox/{flag}/{flag}_{event}.csv"
     cox = pd.read_csv(cox_path)
@@ -35,14 +37,12 @@ for event in interesting_events:
                'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y', 'diabetes_Y',
                'bmi', 'years', 'rank', 'event', 'tte', 'on_pill']]
     cox["sex"] = pd.Categorical(cox["sex"])
-    cox = cox[cox["HDL_cholesterol"] < 3.5]  # put here 3.0 if you want a stable model
-    cox = cox[cox["Total_cholesterol"] < 8.0]  # put here 6.0 if you want a stable model
+    cox_plotting = cox.copy()
 
-    cox["HDL_cholesterol"] = np.log10(cox["HDL_cholesterol"])
-    cox["Total_cholesterol"] = np.log10(cox["Total_cholesterol"])
+    cox["HDL_cholesterol"] = outlier_trim(cox["HDL_cholesterol"], cut=4)
+    cox["Total_cholesterol"] = outlier_trim(cox["Total_cholesterol"], cut=4)
+    cox.dropna(inplace=True)
 
-    # lets start from a basic cox model
-    # cox = cox.query('age <= 60 and age >= 40')
     cox = cox.query('age <= 69 and age >= 39')
     cph = CoxPHFitter()
     cph.fit(cox, duration_col='tte', event_col='event',
@@ -52,28 +52,42 @@ for event in interesting_events:
     test = proportional_hazard_test(cph, cox, time_transform="km")
     print(event)
     print(f"Number of events {np.sum(cox.event)}")
+    print(f"Length: {len(cox)}")
     print(test.summary)
     print("====\n\n")
+
+    cox.to_csv(f"results/cox/hosp/prepped/cox_{flag}_{event}_prepped.csv")
+
+#%%
+cox.set_index("id", inplace=True)
+cox, proteins = two_dfs_merge(cox, proteins)  # both 8660 records
+proteins = scale(proteins)
+proteins.reset_index(inplace=True)
+proteins.to_csv(f"results/cox/hosp/prepped/proteins_{flag}_all_events_scaled_8660.csv")
 
 
 # basic models solved!
 #%%
-# plt.hist(cox["bmi"])
-# plt.show()
+plt.hist(cox_plotting["bmi"])
+plt.title("BMI")
+plt.show()
 
-event = "hf"  # any event would do, these ds's contain the same individuals
+plt.boxplot(cox_plotting["Total_cholesterol"])
+plt.title("Total cholesterol")
+plt.show()
 
+plt.boxplot(cox_plotting["HDL_cholesterol"])
+plt.title("HDL cholesterol")
+plt.show()
+#%%
+cox_plotting["Total_cholesterol"] = outlier_trim(np.log10(cox_plotting["Total_cholesterol"]), cut=3)
+cox_plotting["HDL_cholesterol"] = outlier_trim(np.log10(cox_plotting["HDL_cholesterol"]), cut=3)
+cox_plotting.dropna(inplace=True)
 
-#### correct protein dataset here based on filtering in the loop
+plt.boxplot(cox_plotting["HDL_cholesterol"])
+plt.title("HDL cholesterol")
+plt.show()
 
-# serious trust issues are evident
-common = pd.merge(cox, proteins, left_index=True, right_index=True)
-np.allclose(proteins.iloc[:, 0], common.iloc[:, 2])
-(proteins.iloc[:, 0] == common.iloc[:, 2]).all()
-
-scaled_proteins = scale(proteins)
-# very evident indeed
-summary(scaled_proteins.iloc[:, 0:4])
-
-scaled_proteins.reset_index(inplace=True) # I think it needs "inplace". I left the index as it was for now
-write_parquet(scaled_proteins, "data/transformed_input/cox_analysis_proteins_scaled_13374.parquet")
+plt.boxplot(cox_plotting["Total_cholesterol"])
+plt.title("Total cholesterol")
+plt.show()
