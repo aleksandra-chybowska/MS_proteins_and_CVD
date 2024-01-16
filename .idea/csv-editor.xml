@@ -52,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_models\agesex\hosp\full_myocardial_infarction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\proteins_that_vary_with_pill.csv">
           <value>
             <Attribute>

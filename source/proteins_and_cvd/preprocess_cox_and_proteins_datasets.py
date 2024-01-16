@@ -56,13 +56,12 @@ for event in interesting_events:
     print(test.summary)
     print("====\n\n")
 
-    cox.to_csv(f"results/cox/hosp/prepped/cox_{flag}_{event}_prepped.csv")
+    cox.to_csv(f"results/cox/hosp/prepped/cox_{flag}_{event}_prepped.csv", index=False)
 
 #%%
 cox.set_index("id", inplace=True)
 cox, proteins = two_dfs_merge(cox, proteins)  # both 8660 records
 proteins = scale(proteins)
-proteins.reset_index(inplace=True)
 proteins.to_csv(f"results/cox/hosp/prepped/proteins_{flag}_all_events_scaled_8660.csv")
 
 
