@@ -52,7 +52,21 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_models\agesex\hosp\full_composite_CVD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_models\agesex\hosp\full_myocardial_infarction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_models\agesex_interaction\hosp\full_hf_agesex_interaction.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
