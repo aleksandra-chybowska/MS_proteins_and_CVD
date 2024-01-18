@@ -13,7 +13,7 @@ from lib.cox import extract_cox_coefs, summary_and_test
 
 
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-run = "agesex"
+run = "agesex_interaction"
 proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
 proteins.set_index("id", inplace=True)
 
@@ -39,6 +39,7 @@ if not os.path.exists(path):
 
 #%%
 for event in interesting_events:
+    print(event)
     cox_path = f"results/cox/{flag}/prepped/cox_{flag}_{event}_prepped.csv"
     cox = pd.read_csv(cox_path)
     cox.set_index("id", inplace=True)
@@ -49,12 +50,12 @@ for event in interesting_events:
     # age + sex + Total_chol... + HDL_chol...
 
     full = []
-
     for protein in proteins.columns:
+
         print(protein)
         cph = CoxPHFitter()
         cph.fit(df, duration_col='tte', event_col='event',
-                formula=f"age+sex+Total_cholesterol+HDL_cholesterol+"
+                formula=f"age*sex+Total_cholesterol+HDL_cholesterol+"
                         f"avg_sys+pack_years+rheum_arthritis_Y+diabetes_Y+"
                         f"rank+on_pill+{protein}")
 
@@ -64,7 +65,7 @@ for event in interesting_events:
         # concordance?
 
     results = pd.DataFrame(full)
-    results.to_csv(path + f"/full_{event}.csv")
+    results.to_csv(path + f"/full_{event}_{run}.csv")
 
 #%%
 
