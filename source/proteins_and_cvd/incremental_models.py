@@ -6,11 +6,12 @@
 
 #%%
 import os
+import sys
 import pandas as pd
 from lifelines import CoxPHFitter
 from lifelines.statistics import proportional_hazard_test
+sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')   
 from lib.cox import extract_cox_coefs, summary_and_test
-
 
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
 run = "agesex_interaction"
@@ -18,7 +19,7 @@ proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled
 proteins.set_index("id", inplace=True)
 
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
-                      "tia", "composite_CVD", "CVD_death"]
+                    "tia", "composite_CVD", "CVD_death"]
 covars = ['age+sex', 'avg_sys', 'Total_cholesterol',
         'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y',
         'diabetes_Y', 'years', 'rank', 'on_pill']
@@ -65,8 +66,8 @@ for event in interesting_events:
         # concordance?
 
     results = pd.DataFrame(full)
-    results.to_csv(path + f"/full_{event}_{run}.csv")
-
+    # results.to_csv(path + f"/full_{event}_{run}.csv")
+    break
 #%%
 
 #
