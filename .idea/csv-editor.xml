@@ -52,6 +52,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_isch_stroke_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_models\agesex\hosp\full_composite_CVD.csv">
           <value>
             <Attribute>
