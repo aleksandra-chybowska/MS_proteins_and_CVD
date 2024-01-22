@@ -13,16 +13,12 @@ from lifelines import CoxPHFitter
 sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
 from lib.cox import extract_cox_coefs, summary_and_test
 
+# we have an error here - not age * sex, it should be protein * sex
+def get_formulae(additional_params=None):
 
-def get_formulae(run="agesex", additional_params=None):
-
-    first_covar = "age+sex"
-    if run == "agesex_interaction":
-        first_covar = "age*sex"
-
-    covars = [first_covar, 'avg_sys', 'Total_cholesterol',
+    covars = ['age', 'avg_sys', 'Total_cholesterol',
               'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y',
-              'diabetes_Y', 'years', 'rank', 'on_pill']
+              'diabetes_Y', 'years', 'rank', 'on_pill', 'sex']
     formulae = []
 
     for i in range(0, len(covars)):
@@ -38,6 +34,7 @@ def main():
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
     run = "agesex_interaction"
+    method = '+' if run == "agesex" else '*'
 
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
