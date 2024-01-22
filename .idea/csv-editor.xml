@@ -59,14 +59,7 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex\hosp\full_composite_CVD.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_models\agesex\hosp\full_myocardial_infarction.csv">
+        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_myocardial_infarction_agesex.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -74,6 +67,13 @@
           </value>
         </entry>
         <entry key="\results\incremental_models\agesex_interaction\hosp\full_hf_agesex_interaction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_models\agesex_old\hosp\full_myocardial_infarction.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

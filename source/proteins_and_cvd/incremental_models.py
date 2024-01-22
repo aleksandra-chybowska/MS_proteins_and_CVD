@@ -13,17 +13,19 @@ from lifelines import CoxPHFitter
 sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
 from lib.cox import extract_cox_coefs, summary_and_test
 
-# we have an error here - not age * sex, it should be protein * sex
-def get_formulae(additional_params=None):
 
-    covars = ['age', 'avg_sys', 'Total_cholesterol',
+# we have an error here - not age * sex, it should be protein * sex
+def get_formulae(run="agesex", additional_params=None):
+
+    method = '+' if run == "agesex" else '*'
+    covars = ['age+sex', 'avg_sys', 'Total_cholesterol',
               'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y',
-              'diabetes_Y', 'years', 'rank', 'on_pill', 'sex']
+              'diabetes_Y', 'years', 'rank', 'on_pill']
     formulae = []
 
     for i in range(0, len(covars)):
         if i == 0:
-            formulae.append(covars[i])
+            formulae.append(covars[i] + f"{method}protein")
         else:
             formulae.append(formulae[i - 1] + "+" + covars[i])
 
@@ -34,7 +36,6 @@ def main():
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
     run = "agesex_interaction"
-    method = '+' if run == "agesex" else '*'
 
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
@@ -74,7 +75,7 @@ def main():
             for protein in proteins.columns:
                 print(protein)
                 cph = CoxPHFitter()
-                cph.fit(df, duration_col='tte', event_col='event', formula=formula + f"+{protein}")
+                cph.fit(df, duration_col='tte', event_col='event', formula=formula.replace('protein', protein))
                 row = summary_and_test(cph, protein, df)
                 full.append(row)
                 # concordance?
