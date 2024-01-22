@@ -10,7 +10,7 @@ import sys
 import pandas as pd
 from lifelines import CoxPHFitter
 
-sys.path.append('C:/Users/s1654019/Projects/python/proteins')
+sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
 from lib.cox import extract_cox_coefs, summary_and_test
 
 
@@ -37,7 +37,7 @@ def get_formulae(run="agesex", additional_params=None):
 def main():
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    run = "agesex"
+    run = "agesex_interaction"
 
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
@@ -66,7 +66,9 @@ def main():
 
         for formula in formulae:
             path = f'results/incremental_models/{run}/{flag}'
-            path = path + "/" + formula.replace('+', '_') + "/"
+            tmp = formula.replace('*', 'x')
+            path = path + "/" + tmp.replace('+', '_') + "/"
+
             if not os.path.exists(path):
                 os.makedirs(path)
                 print(f"Path: {path} created!")
