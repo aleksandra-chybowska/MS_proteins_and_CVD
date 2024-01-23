@@ -71,9 +71,12 @@ def main():
 
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    run = "agesex_interaction"
-    feature = "sex[T.M]:protein"
-
+    # run = "agesex_interaction"
+    # feature = "sex[T.M]:protein"
+    run = "agesex"
+    feature = "protein"
+    cores = int(mp.cpu_count() * 0.66)
+    print(f"Used cores: {cores}")
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
@@ -86,8 +89,8 @@ def main():
         os.makedirs(path)
         print(f"Path: {path} created!")
 
-    with mp.Pool(4) as pool:
-        for protein in proteins.columns[:4]:
+    with mp.Pool(cores) as pool:
+        for protein in proteins.columns:
             pool.apply_async(process_proteins,
                              args=(annots, events, feature, flag, interesting_events, protein, proteins, run,))
         pool.close()
