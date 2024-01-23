@@ -36,9 +36,8 @@ def event_dict(flag, events):
 
 
 def process_proteins(annots, events, feature, flag, interesting_events, protein, proteins, run):
-    print(protein)
+
     for event in interesting_events:
-        print(event)
         path = f'results/incremental_parallel/{flag}/{run}/{event}'
         if not os.path.exists(path):
             os.makedirs(path)
@@ -67,6 +66,10 @@ def process_proteins(annots, events, feature, flag, interesting_events, protein,
         results.to_csv(path + f"/{protein}.csv")
 
 
+def update(*a):
+    pbar.update()
+
+
 def main():
 
     # %%
@@ -89,10 +92,13 @@ def main():
         os.makedirs(path)
         print(f"Path: {path} created!")
 
+    pbar = tqdm(total=100)
+
     with mp.Pool(cores) as pool:
         for protein in proteins.columns:
             pool.apply_async(process_proteins,
-                             args=(annots, events, feature, flag, interesting_events, protein, proteins, run,))
+                             args=(annots, events, feature, flag, interesting_events, protein, proteins, run,),
+                             callback=update)
         pool.close()
         pool.join()
 
