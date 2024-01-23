@@ -66,14 +66,49 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex_interaction\hosp\full_hf_agesex_interaction.csv">
+        <entry key="\results\incremental_models\agesex_old\hosp\full_myocardial_infarction.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex_old\hosp\full_myocardial_infarction.csv">
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\A0A075B6H7\isch_stroke\isch_stroke_agesex_interaction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\chd_nos\A0A075B6I0.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\chd_nos\A0A075B6I1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\hf\A0A075B6H7.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\hf\A0A075B6H9.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\hf\A0A075B6I1.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

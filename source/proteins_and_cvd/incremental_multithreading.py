@@ -1,51 +1,97 @@
-import gc
-import logging
+# %%
+import os
+import sys
 import multiprocessing as mp
-from datetime import time
-from typing import List, Dict
-from multiprocessing.pool import ThreadPool as Pool
+from lifelines import CoxPHFitter
 
+sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
+from lib.cox import extract_cox_coefs, summary_and_test
 import pandas as pd
 
-data_frame = pd.DataFrame()
-samples = [
-    {'id': 1, 'param1': 'val1', 'param2': 'val2', 'param3': 'val3'},
-    {'id': 2, 'param1': 'val1', 'param2': 'val2', 'param3': 'val3'},
-    {'id': 3, 'param1': 'val1', 'param2': 'val2', 'param3': 'val3'},
-    {'id': 4, 'param1': 'val1', 'param2': 'val2', 'param3': 'val3'}
-]
+
+def get_formulae(run="agesex", additional_params=None):
+    method = '+' if run == "agesex" else '*'
+    covars = ['age+sex', 'avg_sys', 'Total_cholesterol',
+              'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y',
+              'diabetes_Y', 'years', 'rank', 'on_pill']
+    formulae = []
+
+    for i in range(0, len(covars)):
+        if i == 0:
+            formulae.append(covars[i] + f"{method}protein")
+        else:
+            formulae.append(formulae[i - 1] + "+" + covars[i])
+    return formulae
 
 
-def calculate(samples: List[Dict]) -> List:
-    with Pool(processes=mp.cpu_count()) as mp_pool:
-        start = time.time()
-        results = mp_pool.map(_calculate_cox, samples)
-        gc.collect()
-        end = time.time()
-        logging.info("calculate time = %s" % (end - start))
+def event_dict(flag, events):
+    ret_dict = {}
 
-    return results
+    for event in events:
+        cox_path = f"results/cox/{flag}/prepped/cox_{flag}_{event}_prepped.csv"
+        ret_dict[event] = pd.read_csv(cox_path)
+        ret_dict[event].set_index("id", inplace=True)
+
+    return ret_dict
 
 
-def _calculate_cox(sample: Dict) -> Dict:
-    """
-    https://lifelines.readthedocs.io/en/latest/Survival%20Regression.html
-    https://scikit-survival.readthedocs.io/en/stable/api/generated/sksurv.linear_model.CoxPHSurvivalAnalysis.html
-    """
-    # cox = SuperDuperCoxClass(lambda=sample['param1'])
-    # cox.fit(data_frame)
-    #
-    # outcome = cox.predict()
-    # time_to_survive = outcome['costam']
-    #
-    # return time_to_survive
-    return True
+def process_proteins(annots, events, feature, flag, interesting_events, protein, proteins, run):
+    print(protein)
+    for event in interesting_events:
+        print(event)
+        path = f'results/incremental_parallel/{flag}/{run}/{event}'
+        if not os.path.exists(path):
+            os.makedirs(path)
+            print(f"Path: {path} created!")
+
+        formulae = get_formulae(run)
+
+        full = []
+        for formula in formulae:
+            cox = events[event]
+            feature = feature.replace('protein', protein)
+            df = pd.merge(proteins, cox, how="inner", left_index=True, right_index=True)
+            cph = CoxPHFitter()
+            cph.fit(df, duration_col='tte', event_col='event', formula=formula.replace('protein', protein))
+            row = summary_and_test(cph, feature, df)
+            row["formula"] = formula
+            row["event"] = event
+            row["covar"] = feature
+            row["feature"] = protein
+            full.append(row)
+
+        results = pd.DataFrame(full)
+        results = pd.merge(annots, results, left_on="id", right_on="feature", how="inner")
+        results.drop('feature', axis=1, inplace=True)
+        results.rename(columns={"Name": "name"}, inplace=True)
+        results.to_csv(path + f"/{protein}.csv")
 
 
 def main():
-    outcomes = calculate()
-    results = pd.DataFrame(outcomes)
-    results.to_csv('uber_fajne_rezultaty.csv')
+
+    # %%
+    flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
+    run = "agesex_interaction"
+    feature = "sex[T.M]:protein"
+
+    proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
+    annots = pd.read_csv("data/annotations/short_annots.csv")
+    proteins.set_index("id", inplace=True)
+    interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
+                          "tia", "composite_CVD", "CVD_death"]
+    events = event_dict(flag, interesting_events)
+
+    path = f'results/incremental_parallel/{flag}/{run}'
+    if not os.path.exists(path):
+        os.makedirs(path)
+        print(f"Path: {path} created!")
+
+    with mp.Pool(4) as pool:
+        for protein in proteins.columns[:4]:
+            pool.apply_async(process_proteins,
+                             args=(annots, events, feature, flag, interesting_events, protein, proteins, run,))
+        pool.close()
+        pool.join()
 
 
 if __name__ == "__main__":

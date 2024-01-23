@@ -13,7 +13,7 @@ from lifelines import CoxPHFitter
 sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
 from lib.cox import extract_cox_coefs, summary_and_test
 
-
+# %%
 # we have an error here - not age * sex, it should be protein * sex
 def get_formulae(run="agesex", additional_params=None):
 
