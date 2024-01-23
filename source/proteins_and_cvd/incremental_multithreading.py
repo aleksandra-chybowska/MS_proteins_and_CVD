@@ -2,6 +2,7 @@
 import os
 import sys
 import multiprocessing as mp
+from tqdm import tqdm
 from lifelines import CoxPHFitter
 
 sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
@@ -66,13 +67,8 @@ def process_proteins(annots, events, feature, flag, interesting_events, protein,
         results.to_csv(path + f"/{protein}.csv")
 
 
-def update(*a):
-    pbar.update()
-
-
 def main():
 
-    # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
     # run = "agesex_interaction"
     # feature = "sex[T.M]:protein"
@@ -92,7 +88,10 @@ def main():
         os.makedirs(path)
         print(f"Path: {path} created!")
 
-    pbar = tqdm(total=100)
+    pbar = tqdm(total=len(proteins.columns))
+
+    def update(*a):
+        pbar.update()
 
     with mp.Pool(cores) as pool:
         for protein in proteins.columns:
