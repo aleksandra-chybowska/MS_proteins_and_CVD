@@ -73,7 +73,21 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_parallel\hosp\agesex_interaction\A0A075B6H7\isch_stroke\isch_stroke_agesex_interaction.csv">
+        <entry key="\results\incremental_parallel\hosp\agesex\merged_results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\merged_results_bonf_significant.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\merged_results_bonf_significant_full.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -109,6 +123,20 @@
           </value>
         </entry>
         <entry key="\results\incremental_parallel\hosp\agesex_interaction\hf\A0A075B6I1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\merged_results_bonf_significant.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\merged_results_bonf_significant_full.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
