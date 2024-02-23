@@ -24,7 +24,7 @@ if not os.path.exists(path):
     os.makedirs(path)
     print(f"Path: {path} created!")
 
-# look only at events for which significant associations were repored
+# look only at events for which significant associations were reported
 events = sig["event"].unique()
 # %%
 for event in events:

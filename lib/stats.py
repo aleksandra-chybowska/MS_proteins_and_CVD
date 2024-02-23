@@ -13,6 +13,13 @@ def summary(val):
 
 
 def scale(y, c=True, sc=True):
+    """
+    :param y: data to scale
+    :param c: center?
+    :param sc: scale by sd
+    :return: transformed data
+    """
+
     x = y.copy()
 
     if c:

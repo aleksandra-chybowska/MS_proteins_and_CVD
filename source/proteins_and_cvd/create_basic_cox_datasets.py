@@ -86,6 +86,7 @@ cvd = pd.concat([cvd, cvd_deaths], ignore_index=True)
 composite = cvd.query('Disease in ["isch_stroke", "chd_nos", "myocardial_infarction", "CVD_death"]').copy()
 composite["Disease"] = "composite_CVD"  # 4776
 
+pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
 # %%
 
 cvd = pd.concat([cvd, composite], ignore_index=True)

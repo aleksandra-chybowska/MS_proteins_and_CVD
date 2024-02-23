@@ -15,7 +15,7 @@ pill = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_v2v5co
 
 # %%
 cols = ["id", "age", "sex", "taken_cont", "age_started_cont", "years_taking_cont"]
-females = read_parquet("results/incremental_models/plot_data/females_and_proteins_scaled.parquet")
+females = read_parquet("data/transformed_input/females_and_proteins_scaled.parquet")
 
 # %%
 pd.crosstab(columns="count", index=females["on_pill"])  # 2082 females that could be on pill

@@ -4,7 +4,7 @@ import statsmodels.api as sm
 
 def results_summary_to_dataframe(results):
     """
-    take the result of an statsmodel results table and transforms it into a dataframe
+    take the result of a statsmodel results table and transforms it into a dataframe
     :param results:
     :return: a dataframe with results of lm (R lm summary alike)
     """

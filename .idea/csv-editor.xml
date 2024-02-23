@@ -24,6 +24,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\transformed_input\generic_pheno.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\correlations\correlation_matrix.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\cox\hosp\hosp_chd_nos.csv">
           <value>
             <Attribute>
@@ -52,6 +66,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_composite_CVD_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_models\agesex\hosp\age_sex\full_isch_stroke_agesex.csv">
           <value>
             <Attribute>
@@ -66,7 +87,56 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_models\agesex\hosp\age_sex_avg_sys_Total_cholesterol_HDL_cholesterol_pack_years_rheum_arthritis_Y_diabetes_Y_years_rank_on_pill\full_tia_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_models\agesex_old\hosp\full_chd_nos.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_models\agesex_old\hosp\full_composite_CVD.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_models\agesex_old\hosp\full_myocardial_infarction.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\chd_nos\A0A0A0MS14.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\chd_nos\A0A0A0MT89.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\chd_nos\A0A0B4J1V6.A0A0A0MS15.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\chd_nos\P00736.F5H1V0.F5H2D0.F5H3N3.F5H6Y3.B4DPQ0.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -94,6 +164,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\summary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_parallel\hosp\agesex_interaction\chd_nos\A0A075B6I0.csv">
           <value>
             <Attribute>
@@ -102,6 +179,13 @@
           </value>
         </entry>
         <entry key="\results\incremental_parallel\hosp\agesex_interaction\chd_nos\A0A075B6I1.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\hazard_ratios.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -137,6 +221,41 @@
           </value>
         </entry>
         <entry key="\results\incremental_parallel\hosp\agesex_interaction\merged_results_bonf_significant_full.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\summary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel_old\hosp\agesex_interaction\hazard_ratios.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel_old\hosp\agesex_interaction\summary.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\medications\agesex\hosp\medications_full_composite_CVD_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\medications\agesex\hosp\medications_full_hf_agesex.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
