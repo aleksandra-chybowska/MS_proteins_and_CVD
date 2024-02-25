@@ -39,7 +39,7 @@ def event_dict(flag, events):
 def process_proteins(annots, events, feature, flag, interesting_events, protein, proteins, run):
 
     for event in interesting_events:
-        path = f'results/incremental_parallel/{flag}/{run}/{event}'
+        path = f'results/incremental_parallel_deaths/{flag}/{run}/{event}'
         if not os.path.exists(path):
             os.makedirs(path)
             print(f"Path: {path} created!")
@@ -74,16 +74,17 @@ def main():
     # feature = "sex[T.M]:protein"
     run = "agesex"
     feature = "protein"
-    cores = int(mp.cpu_count() * 0.66)
+    cores = int(mp.cpu_count() * 0.8)
     print(f"Used cores: {cores}")
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
-    interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
-                          "tia", "composite_CVD", "CVD_death"]
+    # interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
+    #                       "tia", "composite_CVD", "CVD_death", "death"]
+    interesting_events = ["CVD_death", "death"]
     events = event_dict(flag, interesting_events)
 
-    path = f'results/incremental_parallel/{flag}/{run}'
+    path = f'results/incremental_parallel_deaths/{flag}/{run}'
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"Path: {path} created!")
