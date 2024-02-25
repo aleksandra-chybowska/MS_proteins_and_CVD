@@ -1,11 +1,13 @@
 # %%
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 from lifelines import CoxPHFitter, KaplanMeierFitter
 
 # %%
 analysis_type = "plotly_express"
-df = pd.read_csv("results/incremental_parallel/hosp/agesex/merged_results.csv")
+path = "results/incremental_parallel_deaths/hosp/agesex/"
+df = pd.read_csv(path + "merged_results.csv")
 events = df["event"].unique()
 formula_basic = "age+sex+protein"
 formula_full = ("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol+"
@@ -39,6 +41,8 @@ for event in events:
                                         "yes" if x["p_basic"] < threshold and x["p_full"] < threshold else "no", axis=1)
     plotting = pd.concat([plotting, tmp], axis="rows")
 
+plotting["att"] = plotting.apply(lambda row: (np.log10(row["hr_full"])*100)/np.log10(row["hr_basic"]), axis=1)
+plotting.to_csv(path + "plotting_df.csv", index=False)
 # %%
 if analysis_type == "plotly_express":
     import plotly.express as px
