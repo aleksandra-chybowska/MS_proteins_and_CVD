@@ -1,4 +1,5 @@
 #%%
+import os
 import pyreadr
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -14,7 +15,7 @@ import numpy as np
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
-                      "tia", "composite_CVD", "CVD_death"]
+                      "tia", "composite_CVD", "CVD_death", "death"]
 
 # initial subsetting
 event = "hf"
@@ -26,6 +27,11 @@ proteins.set_index("id", inplace=True)
 
 cox, proteins = two_dfs_merge(cox, proteins)  # both 13374 records, need to recalculate events
 indexes = cox.index
+
+path = f'results/cox/{flag}/prepped/'
+if not os.path.exists(path):
+    os.makedirs(path)
+    print(f"Path: {path} created!")
 
 #%%
 # prep for cvd ~ age + sex + protein + risk_factors + on_pill

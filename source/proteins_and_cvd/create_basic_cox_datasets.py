@@ -11,14 +11,16 @@ pill = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_v2v5co
 dictionary = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_datadictionary.txt")
 medications = pd.read_table("data/disease/medications/all_CVD_prescriptions.txt")
 pheno = pyreadr.read_r("data/phenotypes/GS_phenos_internal_with_DST_28Nov2023_REM.rds")[None]  # 24079
-deaths = pd.read_csv("data/phenotypes/2023-08-23_deaths.csv")
 diseases = pd.read_csv("data/phenotypes/2023-08-22_disease_codes_combined.csv")
 females = read_parquet("data/transformed_input/females_on_pill.parquet")
+deaths = pd.read_csv("data/phenotypes/2024-02-23_deaths_df.csv")
+cvd_deaths = pd.read_csv("data/phenotypes/2024-02-23_cvd_deaths_df.csv")
 
 flag = "hosp"  # hosp, hosp_gp_cons, hosp_gp
 output = f"results/cox/{flag}/"
 
 # ### phenos ###
+# correlation between covariates checked in covar_corr_and_deaths.py
 pheno["gs_appt"] = pheno.apply(lambda row: sd.year_month_to_date(row["y_appt"], row["m_appt"]), axis="columns")
 pheno = pheno[["id", "gs_appt", "age", "sex", "avg_sys", "Total_cholesterol",
                "HDL_cholesterol", "pack_years", "rheum_arthritis_Y", "diabetes_Y",
@@ -35,22 +37,7 @@ pd.crosstab(index=pheno["sex"], columns=pheno["on_pill"])
 pheno = pheno.dropna()  # 17150
 
 # %%
-deaths = deaths.drop_duplicates(subset='id')
-deaths['id'].nunique()  # 1628 unique deaths
-
 diseases["Disease"] = diseases["Disease"].str.lower()
-
-pepsi = pd.read_csv("data/disease/cvd_deaths.csv")
-pepsi = pd.merge(pheno, pepsi, on="id")
-cvd_deaths = pd.DataFrame({"id": pepsi["id"],
-                           "dt1_ym": pepsi["dod_ym"],
-                           "gs_appt": pepsi["gs_appt"],
-                           "incident": [1] * len(pepsi),
-                           "Disease": ["CVD_death"] * len(pepsi),
-                           "Source": ["Secondary_Care"] * len(pepsi),
-                           "GP_Consent": [1] * len(pepsi)
-                           })
-cvd_deaths = cvd_deaths.drop_duplicates(subset='id')  # one issue fixed, 693 cvd_deaths w/o pill, 469 w/ pill
 
 score2 = pd.read_csv("data/scores/GS_score2_export.csv")
 score2.value_counts(score2['notes'], dropna=False)
@@ -66,15 +53,17 @@ assign.value_counts(assign['notes'], dropna=False)
 assign = assign[~assign["notes"].isna()]
 assign = assign.iloc[:, :-1]  # remove last column
 assign.shape  # 3088, 2
-
+# %%
 pheno = pd.merge(pheno, assign, on="id", how="left")
 pheno = pd.merge(pheno, score2, on="id", how="left")
-pheno = pd.merge(pheno, deaths[["id", "dod_ym"]], on="id", how="left")
+pheno = pd.merge(pheno, deaths[["id", "dt1_ym"]], on="id", how="left")
+pheno = pheno.rename(columns={"dt1_ym": "dod_ym"})
 pheno.describe()
 pheno.info()
 pheno["dead"] = 0
-pheno.loc[~pheno['dod_ym'].isna(), 'dead'] = 1
-
+pheno.loc[~pheno['dod_ym'].isna(), 'dead'] = 1  # 1022 deaths
+pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
+# %%
 # diseases #
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos", "tia"]
 
@@ -83,10 +72,9 @@ cvd = diseases[diseases["Disease"].isin(interesting_events)]  # 5917 events
 cvd = cvd.loc[~((cvd["Disease"] == "hf") & (cvd["Source"] == "Primary_Care"))]  # 5539
 cvd.loc[cvd["Disease"] == "hf", "Source"].value_counts()
 cvd = pd.concat([cvd, cvd_deaths], ignore_index=True)
+cvd = pd.concat([cvd, deaths], ignore_index=True)
 composite = cvd.query('Disease in ["isch_stroke", "chd_nos", "myocardial_infarction", "CVD_death"]').copy()
 composite["Disease"] = "composite_CVD"  # 4776
-
-pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
 # %%
 
 cvd = pd.concat([cvd, composite], ignore_index=True)
@@ -96,13 +84,14 @@ if flag == "hosp":
     cvd = cvd.query('Source == "Secondary_Care"')
 if flag == "hosp_gp_cons":
     cvd = cvd.query('GP_Consent == 1')
-
+# %%
 pd.crosstab(cvd.Source, cvd.Disease, normalize="columns")
+cvd['Disease'].value_counts()
 
 dis_list = cvd.Disease.unique()
 # %%
 for outcome in dis_list:
-    dis1 = cvd.query('Disease == @outcome').copy().reset_index(drop=True) # for composite_CVD it is 2221
+    dis1 = cvd.query('Disease == @outcome').copy().reset_index(drop=True)  # for composite_CVD it is 2221
     dis1 = dis1.sort_values(by=["id", "dt1_ym"])
     dis1 = dis1.drop_duplicates(subset='id') # for composite CVD it is 1599
     print(f"Disease: {outcome}; N={len(dis1)}")
@@ -112,7 +101,7 @@ for outcome in dis_list:
     out["tte"] = out.apply(lambda row:
                            get_time_to_event(date_baseline=row["gs_appt"],
                                              date_event=row["dt1_ym"],
-                                             date_censor="202204",
+                                             date_censor="202310",  # 202204 for most events - talk to Daniel
                                              date_death=row["dod_ym"]), axis="columns")
     out["age_at_event"] = out.age + out.tte
     out.to_csv(f"{output}/{flag}_{outcome}.csv", na_rep='NA', index=False)
