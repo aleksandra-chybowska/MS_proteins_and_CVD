@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 from lib.pandas_ext import two_dfs_merge
 from scipy.stats import spearmanr
 
-deaths_new = pyreadr.read_r("data/phenotypes/2024-02-19_proteomics_mortality_phenodata_for_ola.rds")[None]
-deaths = deaths_new[['id', 'dod_ym', 'cause', 'dead']]
-
 # %%
 # 17150
 pheno = pd.read_csv("data/transformed_input/generic_pheno.csv") # based on deaths_old, there's 1122 deaths in this file
@@ -41,18 +38,8 @@ plt.colorbar()
 plt.title('Correlation Matrix')
 plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation='vertical')
 plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
-plt.savefig("corr_matrix.png")
+plt.savefig("plots/corr_matrix.png")
 plt.show()
 
 # %%
-pheno_deaths_new = pd.merge(pheno, deaths, on='id', how='left')
-pheno_deaths_new["dead_x"].value_counts()  # 870
-pheno_deaths_new["dead_y"].value_counts()  # 1022
-
-
-
-# %%
-deaths = deaths.loc[deaths['dead'] == 1]
-deaths = deaths.drop_duplicates(subset='id')
-deaths['id'].nunique()  # 1628 unique deaths
 
