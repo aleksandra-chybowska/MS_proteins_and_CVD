@@ -1,5 +1,6 @@
 import pandas as pd
 from lifelines.statistics import proportional_hazard_test
+from matplotlib import pyplot as plt
 
 from lib.string_date import date_diff
 import math
@@ -82,3 +83,23 @@ def extract_cox_coefs(cph, feature):
     ret = pd.concat([first, cox_summary])
 
     return ret
+
+
+def plot_partial_effects(cph, covariates, range, legend, save=False):
+    """
+    Plots partial effects of covariates on cox model.
+    :param cph: results of a lifeliness cox model
+    :param covariates: array containing covariates (sex? protein?). Example: ["sex", "protein"]
+    :param range: array of arrays defining values of covariates. Example: [["M", -3], ["M", 3], ["F", -3], ["F", 3]]
+    :param legend: how do we label these covariates + ranges on the plot
+    :param save: if true, plots will be saved to "plots" dir
+    :return: matplotlib plot
+    """
+    cph.plot_partial_effects_on_outcome(covariates=covariates,
+                                        values=range, cmap='coolwarm', plot_baseline=False)
+    plt.ylabel("HF-free survival")
+    plt.xlabel("Follow up (years)")
+    plt.legend(legend, loc="lower left")
+    if save:
+        plt.savefig(f"plots/partial_effects_{covariates[0]}_{covariates[1]}.png", dpi=600)
+    plt.show()

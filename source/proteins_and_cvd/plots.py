@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from lifelines import CoxPHFitter, KaplanMeierFitter
+from lib.cox import plot_partial_effects
 
 # %%
 analysis_type = "plotly_express"
@@ -12,7 +13,7 @@ events = df["event"].unique()
 formula_basic = "age+sex+protein"
 formula_full = ("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol+"
                 "pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
-bonf_correction = 0.05/439
+bonf_correction = 0.05 / 439
 threshold = bonf_correction
 # df = df[df["id"] == "P01019"]
 plotting = pd.DataFrame()
@@ -41,7 +42,7 @@ for event in events:
                                         "yes" if x["p_basic"] < threshold and x["p_full"] < threshold else "no", axis=1)
     plotting = pd.concat([plotting, tmp], axis="rows")
 
-plotting["att"] = plotting.apply(lambda row: (np.log10(row["hr_full"])*100)/np.log10(row["hr_basic"]), axis=1)
+plotting["att"] = plotting.apply(lambda row: 100 - (np.log10(row["hr_full"]) * 100) / np.log10(row["hr_basic"]), axis=1)
 plotting.to_csv(path + "plotting_df.csv", index=False)
 # %%
 if analysis_type == "plotly_express":
@@ -69,36 +70,49 @@ elif analysis_type == "matplotlib":
     plt.title("")
     plt.show()
 
-
 # Protein * sex interaction term effect
 # Protein: P00751.H7C5H1.E7ETN3.B4E1Z4
-#%%
-df = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
+# %%
+df_hf = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
+df_death = pd.read_csv("results/cox/hosp/prepped/cox_hosp_death_prepped.csv")
 proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
-protein = "P00751.H7C5H1.E7ETN3.B4E1Z4"
-df = pd.merge(df, proteins, on="id")
-print(df.shape)
+annots = pd.read_csv("data/annotations/short_annots.csv")
+proteins_sex_effect = ["P00751.H7C5H1.E7ETN3.B4E1Z4",  # for HF, complement C1
+                       "P02768.A0A0C4DGB6.H7C013.A0A087WWT3.B7WNR0.C9JKR2",  # death, albumin
+                       "P35542.A0A096LPE2",  # death, serum amyloid A-4 protein
+                       "Q08380"]  # death, galectin binding protein
+# %%
+hf = pd.merge(df_hf, proteins, on="id")
+death = pd.merge(df_death, proteins, on="id")
 
-cph = CoxPHFitter()
-formula = (f"age+sex*{protein}+avg_sys+Total_cholesterol+HDL_cholesterol+pack_years+"
-           f"rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
-cph.fit(df, duration_col='tte', event_col='event', formula=formula)
-cph.print_summary()
+for protein in proteins_sex_effect:
+    df = death
+    if protein == "P00751.H7C5H1.E7ETN3.B4E1Z4":
+        df = hf
 
-plot = cph.plot_partial_effects_on_outcome(covariates=["sex", "P00751.H7C5H1.E7ETN3.B4E1Z4"],
-                                           values=[["M", -3], ["M", 3],
-                                                   ["F", -3], ["F", 3]], cmap='coolwarm', plot_baseline=False)
-plt.ylabel("HF-free survival")
-plt.xlabel("Follow up (years)")
-plt.legend(["Males, Proteins 2,3 (low)", "Males, Proteins 2,3 (high)",
-            "Females, Proteins 2,3 (low)", "Females, Proteins 2,3 (high)"])
-# plt.savefig("plots/survival.png", dpi=600)
-plt.show()
+    cph = CoxPHFitter()
+    formula = (f"age+sex*{protein}+avg_sys+Total_cholesterol+HDL_cholesterol+pack_years+"
+               f"rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
+
+    cph.fit(df, duration_col='tte', event_col='event', formula=formula)
+    cph.print_summary()
+
+    covars = ["sex", protein]
+    typical_range = [["M", -3], ["M", 3], ["F", -3], ["F", 3]]
+    annot = annots.loc[annots["id"] == protein, "Name"].values[0]
+
+    legend = [f"Males, {annot} (low)",
+              f"Males, {annot} (high)",
+              f"Females, {annot} (low)",
+              f"Females, {annot} (high)"]
+
+    plot_partial_effects(cph, covars, typical_range, legend, save=True)
+
 # cph.hazard_ratios_.to_csv("results/incremental_parallel/hosp/agesex_interaction/hazard_ratios.csv")
 # cph.summary.to_csv("results/incremental_parallel/hosp/agesex_interaction/summary.csv")
 
 
-#%% check the plotting function
+# %% check the plotting function
 
 # Separate data by sex
 male_data_pg_low = df[(df['sex'] == 'M') & (df['P00751.H7C5H1.E7ETN3.B4E1Z4'] < -1.5)]
@@ -117,7 +131,6 @@ kmf_male_high.fit(male_data_pg_high['tte'], event_observed=male_data_pg_high['ev
 kmf_female_low.fit(female_data_pg_low['tte'], event_observed=female_data_pg_low['event'], label='Female, PG (low)')
 kmf_female_high.fit(female_data_pg_high['tte'], event_observed=female_data_pg_high['event'], label='Female, PG (high)')
 
-
 # Plot Kaplan-Meier curves for each sex
 plt.figure(figsize=(10, 6))
 
@@ -133,9 +146,8 @@ plt.grid(False)
 plt.legend()
 plt.show()
 
-#%%
+# %%
 df = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
 proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
 protein = "P00751.H7C5H1.E7ETN3.B4E1Z4"
 df = pd.merge(df, proteins, on="id")
-

@@ -70,9 +70,9 @@ def process_proteins(annots, events, feature, flag, interesting_events, protein,
 def main():
 
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    # run = "agesex_interaction"
+    run = "agesex_interaction"
     # feature = "sex[T.M]:protein"
-    run = "agesex"
+    #run = "agesex"
     feature = "protein"
     cores = int(mp.cpu_count() * 0.8)
     print(f"Used cores: {cores}")
