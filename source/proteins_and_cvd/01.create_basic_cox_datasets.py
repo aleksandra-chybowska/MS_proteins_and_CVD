@@ -4,9 +4,8 @@ import pandas as pd
 import lib.string_date as sd
 from lib.cox import get_time_to_event
 from lib.parquet_helper import read_parquet
-
+# %%
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
-annots = pd.read_csv("data/annotations/short_annots.csv")
 pill = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_v2v5combined.txt")
 dictionary = pd.read_table("data/disease/womans_phenotypes/GS_womens_phenotypes_datadictionary.txt")
 medications = pd.read_table("data/disease/medications/all_CVD_prescriptions.txt")
@@ -16,6 +15,7 @@ females = read_parquet("data/transformed_input/females_on_pill.parquet")
 deaths = pd.read_csv("data/phenotypes/2024-02-23_deaths_df.csv")
 cvd_deaths = pd.read_csv("data/phenotypes/2024-02-23_cvd_deaths_df.csv")
 
+# %%
 flag = "hosp"  # hosp, hosp_gp_cons, hosp_gp
 output = f"results/cox/{flag}/"
 
@@ -62,7 +62,7 @@ pheno.describe()
 pheno.info()
 pheno["dead"] = 0
 pheno.loc[~pheno['dod_ym'].isna(), 'dead'] = 1  # 1022 deaths
-pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
+# pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
 # %%
 # diseases #
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos", "tia"]
@@ -101,7 +101,7 @@ for outcome in dis_list:
     out["tte"] = out.apply(lambda row:
                            get_time_to_event(date_baseline=row["gs_appt"],
                                              date_event=row["dt1_ym"],
-                                             date_censor="202310",  # 202204 for most events - talk to Daniel
+                                             date_censor="202308",
                                              date_death=row["dod_ym"]), axis="columns")
     out["age_at_event"] = out.age + out.tte
     out.to_csv(f"{output}/{flag}_{outcome}.csv", na_rep='NA', index=False)

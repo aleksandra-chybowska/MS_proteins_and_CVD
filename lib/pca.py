@@ -13,6 +13,20 @@ def run_PCA(x, n_components=2):
     return pd.DataFrame(data=pc, columns=['principal component 1', 'principal component 2'])
 
 
+def pcs_by_var_explained(ds, variance_percentage):
+    pca = PCA()
+    pca = pca.fit(ds)
+
+    # Get the explained variance ratio for each principal component
+    explained_variance_ratio = pca.explained_variance_ratio_
+
+    # Calculate the cumulative explained variance
+    cumulative_explained_variance = explained_variance_ratio.cumsum()
+
+    # Find the number of components needed to explain 80% of the variance
+    num_components = next(i for i, cumulative_variance in enumerate(cumulative_explained_variance) if cumulative_variance >= 0.80) + 1
+    print(f'Number of components explaining at least 80% of the variance: {num_components}')
+
 def plot_PCA(target_col_name, targets, colors, df, filename):
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(1, 1, 1)

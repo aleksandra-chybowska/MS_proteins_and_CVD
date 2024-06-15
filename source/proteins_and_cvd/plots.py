@@ -1,75 +1,12 @@
 # %%
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from lifelines import CoxPHFitter, KaplanMeierFitter
 from lib.cox import plot_partial_effects
+import matplotlib.pyplot as plt
+
 
 # %%
-analysis_type = "plotly_express"
-path = "results/incremental_parallel_deaths/hosp/agesex/"
-df = pd.read_csv(path + "merged_results.csv")
-events = df["event"].unique()
-formula_basic = "age+sex+protein"
-formula_full = ("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol+"
-                "pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
-bonf_correction = 0.05 / 439
-threshold = bonf_correction
-# df = df[df["id"] == "P01019"]
-plotting = pd.DataFrame()
-# %%
-for event in events:
-    tmp = df[df["event"] == event]
-    basic = tmp[tmp["formula"] == formula_basic]
-    basic = basic[["id", "name", "hr", "lci", "uci", "p"]]
-    basic.rename(columns={"hr": "hr_basic", "lci": "lci_basic", "uci": "uci_basic", "p": "p_basic"},
-                 inplace=True)
-    basic["err_basic"] = (basic["uci_basic"] - basic["lci_basic"]) / 2
-    significant_basic = basic[basic["p_basic"] < threshold]
-    names = set(significant_basic["name"])
-
-    full = tmp[tmp["formula"] == formula_full]
-    full = full[["id", "hr", "lci", "uci", "event", "name", "p"]]
-    full.rename(columns={"hr": "hr_full", "lci": "lci_full", "uci": "uci_full", "p": "p_full"},
-                inplace=True)
-    full["err_full"] = (full["uci_full"] - full["lci_full"]) / 2
-    significant_full = full[full["p_full"] < threshold]
-    names.update(set(significant_full["name"]))
-
-    tmp = pd.merge(basic, full, on="id", how="inner")
-    tmp = tmp.query("name_x in @names").copy()
-    tmp["both_significant"] = tmp.apply(lambda x:
-                                        "yes" if x["p_basic"] < threshold and x["p_full"] < threshold else "no", axis=1)
-    plotting = pd.concat([plotting, tmp], axis="rows")
-
-plotting["att"] = plotting.apply(lambda row: 100 - (np.log10(row["hr_full"]) * 100) / np.log10(row["hr_basic"]), axis=1)
-plotting.to_csv(path + "plotting_df.csv", index=False)
-# %%
-if analysis_type == "plotly_express":
-    import plotly.express as px
-    import plotly.io as pio
-
-    pio.renderers.default = "browser"
-    fig = px.scatter(plotting, x="hr_basic", y="hr_full", opacity=0.7, color="both_significant",
-                     error_x="err_basic", error_y="err_full", hover_name="name_x",
-                     facet_col="event", facet_col_wrap=2,
-                     labels={
-                         "hr_basic": "HR basic (95% CI)",
-                         "hr_full": "HR full (95% CI)",
-                         "event": "Event",
-                         "both_significant": "Both HRs significant (Bonferroni)"
-                     })
-    fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
-    fig.show()
-elif analysis_type == "matplotlib":
-    plt.errorbar(plotting["hr_basic"], plotting["hr_full"],
-                 xerr=plotting["err_basic"],
-                 yerr=plotting["err_full"], fmt='o', alpha=0.6)
-    plt.xlabel("HR basic")
-    plt.ylabel("HR full")
-    plt.title("")
-    plt.show()
-
 # Protein * sex interaction term effect
 # Protein: P00751.H7C5H1.E7ETN3.B4E1Z4
 # %%
@@ -110,8 +47,6 @@ for protein in proteins_sex_effect:
 
 # cph.hazard_ratios_.to_csv("results/incremental_parallel/hosp/agesex_interaction/hazard_ratios.csv")
 # cph.summary.to_csv("results/incremental_parallel/hosp/agesex_interaction/summary.csv")
-
-
 # %% check the plotting function
 
 # Separate data by sex
@@ -147,7 +82,34 @@ plt.legend()
 plt.show()
 
 # %%
-df = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
-proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
-protein = "P00751.H7C5H1.E7ETN3.B4E1Z4"
-df = pd.merge(df, proteins, on="id")
+
+# cross plot
+analysis_type = "plotly_express"
+path = "results/incremental_parallel_deaths/hosp/agesex/"
+plotting = pd.read_csv(path + "plotting_df.csv")
+
+# %%
+if analysis_type == "plotly_express":
+    import plotly.express as px
+    import plotly.io as pio
+
+    pio.renderers.default = "browser"
+    fig = px.scatter(plotting, x="hr_basic", y="hr_full", opacity=0.7, color="both_significant",
+                     error_x="err_basic", error_y="err_full", hover_name="name_x",
+                     facet_col="event", facet_col_wrap=2,
+                     labels={
+                         "hr_basic": "HR basic (95% CI)",
+                         "hr_full": "HR full (95% CI)",
+                         "event": "Event",
+                         "both_significant": "Both HRs significant (Bonferroni)"
+                     })
+    fig.for_each_annotation(lambda a: a.update(text=a.text.split("=")[-1]))
+    fig.show()
+elif analysis_type == "matplotlib":
+    plt.errorbar(plotting["hr_basic"], plotting["hr_full"],
+                 xerr=plotting["err_basic"],
+                 yerr=plotting["err_full"], fmt='o', alpha=0.6)
+    plt.xlabel("HR basic")
+    plt.ylabel("HR full")
+    plt.title("")
+    plt.show()

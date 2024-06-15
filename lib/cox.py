@@ -1,7 +1,7 @@
 import pandas as pd
 from lifelines.statistics import proportional_hazard_test
 from matplotlib import pyplot as plt
-
+import warnings
 from lib.string_date import date_diff
 import math
 
@@ -29,7 +29,8 @@ def get_time_to_event(date_baseline, date_event, date_censor, date_death=None):
 
     if tte_censor < tte:
         # Maybe a warning would work better here?
-        raise Exception("Something went wrong - we're censoring people with events.")
+        print("Warning - we're censoring people with events.")
+        return min(tte_censor, tte_death)
 
     if not math.isnan(float(date_event)):
         return tte

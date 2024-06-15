@@ -10,6 +10,48 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\._mass_spec_proteins_annotations.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="#1e#" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\._short_annots.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="#1e#" />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\_old\mass_spec_proteins_annotations.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\_old\short_annots_old.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\jure_extended\proteins_annots.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="U:\Ola\Lab\Proteins\annotations\short_annots.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\annotations\short_annots.csv">
           <value>
             <Attribute>
@@ -45,7 +87,21 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\correlations\correlation_matrix.csv">
+        <entry key="\results\_old\incremental_parallel_correct\hosp\agesex\merged_results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\_old\incremental_parallel_correct\hosp\agesex\plotting_df_new.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\hosp_CVD_death.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -73,6 +129,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\cox\hosp\hosp_hf.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\hosp_isch_stroke.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\cox\hosp\hosp_myocardial_infarction.csv">
           <value>
             <Attribute>
@@ -87,6 +157,27 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\cox\hosp\prepped\cox_hosp_CVD_death_prepped.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\prepped\cox_hosp_chd_nos_prepped.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\prepped\cox_hosp_composite_CVD_prepped.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\cox\hosp\prepped\cox_hosp_death_prepped.csv">
           <value>
             <Attribute>
@@ -94,189 +185,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\cox\hosp_old_deaths\hosp_hf.csv">
+        <entry key="\results\cox\hosp\prepped\cox_hosp_hf_prepped.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_composite_CVD_agesex.csv">
+        <entry key="\results\cox\hosp\prepped\cox_hosp_isch_stroke_prepped.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_isch_stroke_agesex.csv">
+        <entry key="\results\cox\hosp\prepped\cox_hosp_myocardial_infarction_prepped.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_models\agesex\hosp\age_sex\full_myocardial_infarction_agesex.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_models\agesex\hosp\age_sex_avg_sys_Total_cholesterol_HDL_cholesterol_pack_years_rheum_arthritis_Y_diabetes_Y_years_rank_on_pill\full_tia_agesex.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_models\agesex_old\hosp\full_chd_nos.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_models\agesex_old\hosp\full_composite_CVD.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_models\agesex_old\hosp\full_myocardial_infarction.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_correct\hosp\agesex\merged_results_bonf_significant.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_correct\hosp\agesex\merged_results_bonf_significant_full.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\CVD_death\A0A075B6H7.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\death\A0A075B6I1.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\death\A0A075B6P5.A0A075B6S2.P01614.A2NJV5.A0A087WW87.A0A0A0MRZ7.P01615.P06310.A0A075B6S6.A0A087X0Q4.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\death\A0A0J9YX35.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\death\P04217.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\death\Q08380.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\merged_results.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\merged_results_bonf_significant.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\merged_results_bonf_significant_full.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex\plotting_df.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_deaths\hosp\agesex_interaction\merged_results_bonf_significant_full.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_old\hosp\agesex_interaction\hazard_ratios.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel_old\hosp\agesex_interaction\summary.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\medications\agesex\hosp\medications_full_composite_CVD_agesex.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\medications\agesex\hosp\medications_full_hf_agesex.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\proteins_that_vary_with_pill.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\proteins_that_vary_with_pill_bonf_corrected.csv">
+        <entry key="\results\cox\hosp\prepped\cox_hosp_tia_prepped.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

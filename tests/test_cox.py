@@ -37,12 +37,13 @@ class MyTestCase(unittest.TestCase):
         with self.assertRaises(Exception):
             get_time_to_event(date_baseline, date_event, date_censor, date_death)
 
-        # date of event is greater than date of death
-        date_censor = "201503"
-        date_baseline = "200903"
-        date_event = "202204"
-        date_death = np.NaN
-
-        with self.assertRaises(Exception):
-            get_time_to_event(date_baseline, date_event, date_censor, date_death)
+        # This code has been removed as sometimes it is necessary to censor people with events
+        # # date of event is greater than date of death
+        # date_censor = "201503"
+        # date_baseline = "200903"
+        # date_event = "202204"
+        # date_death = np.NaN
+        #
+        # with self.assertRaises(Exception):
+        #     get_time_to_event(date_baseline, date_event, date_censor, date_death)
 

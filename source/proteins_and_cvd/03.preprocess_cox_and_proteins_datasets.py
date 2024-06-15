@@ -47,6 +47,9 @@ for event in interesting_events:
 
     cox["HDL_cholesterol"] = outlier_trim(cox["HDL_cholesterol"], cut=4)
     cox["Total_cholesterol"] = outlier_trim(cox["Total_cholesterol"], cut=4)
+    cox['bmi'] = np.where((cox['bmi'] < 18) | (cox['bmi'] > 50), np.NaN, cox['bmi'])
+    cox['avg_sys'] = outlier_trim(cox["avg_sys"], cut=4)
+    cox['pack_years'] = outlier_trim(cox["pack_years"], cut=4)
     cox.dropna(inplace=True)
 
     cox = cox.query('age <= 69 and age >= 39')
@@ -68,13 +71,21 @@ for event in interesting_events:
 cox.set_index("id", inplace=True)
 cox, proteins = two_dfs_merge(cox, proteins)  # both 8660 records
 proteins = scale(proteins)
-proteins.to_csv(f"results/cox/hosp/prepped/proteins_{flag}_all_events_scaled_8660.csv")
+proteins.to_csv(f"results/cox/hosp/prepped/proteins_{flag}_all_events_scaled_8491.csv")
 
 
 # basic models solved!
 #%%
-plt.hist(cox_plotting["bmi"])
+plt.hist(cox["bmi"])
 plt.title("BMI")
+plt.show()
+
+plt.hist(cox["avg_sys"])
+plt.title("AVG_SYS")
+plt.show()
+
+plt.hist(cox["pack_years"])
+plt.title("PY")
 plt.show()
 
 plt.boxplot(cox_plotting["Total_cholesterol"])

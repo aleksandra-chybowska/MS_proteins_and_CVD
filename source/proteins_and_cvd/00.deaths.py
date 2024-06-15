@@ -2,6 +2,7 @@ import pyreadr
 import pandas as pd
 from lib.pandas_ext import two_dfs_merge
 
+# %%
 pheno = pd.read_csv("data/transformed_input/generic_pheno.csv")  # based on deaths_old, there's 1122 deaths in this file
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 pheno.set_index("id", inplace=True)
@@ -40,7 +41,7 @@ cerebrovascular = ["I60", "I61", "I62", "I63", "I64", "I65", "I66", "I67", "I68"
 # %%
 cvd_deaths = deaths[deaths['value'].isin(heart + hypertension + cerebrovascular)]
 cvd_deaths = cvd_deaths.drop_duplicates(subset='id')  # 561
-cvd_deaths.to_csv("data/phenotypes/2024-02-23_cvd_deaths.csv", index=False)
+cvd_deaths.to_csv("../../data/phenotypes/2024-02-23_cvd_deaths.csv", index=False)
 
 # check with previous file
 # %%
@@ -63,7 +64,7 @@ cvd_deaths_df = pd.DataFrame({"id": cvd_deaths_df["id"],
                               "GP_Consent": [1] * len(cvd_deaths_df)
                               })
 cvd_deaths_df = cvd_deaths_df.drop_duplicates(subset='id')  # 451 deaths in merged df
-cvd_deaths_df.to_csv("data/phenotypes/2024-02-23_cvd_deaths_df.csv", index=False)
+cvd_deaths_df.to_csv("../../data/phenotypes/2024-02-23_cvd_deaths_df.csv", index=False)
 
 # %%
 # prepare death as phenotype
@@ -78,5 +79,5 @@ deaths_df = pd.DataFrame({"id": deaths_df["id"],
                           "GP_Consent": [1] * len(deaths_df)
                           })
 
-deaths_df.to_csv("data/phenotypes/2024-02-23_deaths_df.csv", index=False)
+deaths_df.to_csv("../../data/phenotypes/2024-02-23_deaths_df.csv", index=False)
 

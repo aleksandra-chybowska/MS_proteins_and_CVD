@@ -13,37 +13,34 @@ from lifelines import CoxPHFitter
 sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
 from lib.cox import extract_cox_coefs, summary_and_test
 
+
 # %%
 # we have an error here - not age * sex, it should be protein * sex
-def get_formulae(run="agesex", additional_params=None):
-
-    method = '+' if run == "agesex" else '*'
-    covars = ['age+sex', 'avg_sys', 'Total_cholesterol',
+def get_formulae():
+    basic = "age+sex+protein"
+    covars = ['avg_sys', 'Total_cholesterol',
               'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y',
               'diabetes_Y', 'years', 'rank', 'on_pill']
-    formulae = []
+    formulae = [basic]
 
     for i in range(0, len(covars)):
-        if i == 0:
-            formulae.append(covars[i] + f"{method}protein")
-        else:
-            formulae.append(formulae[i - 1] + "+" + covars[i])
-
+        formulae.append(basic + f"+{covars[i]}")
     return formulae
 
 
 def main():
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    run = "agesex_interaction"
+    run = "agesex"
+    input_path = "results/incremental_parallel_correct/hosp/agesex/"
 
     proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
-    interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
-                          "tia", "composite_CVD", "CVD_death"]
+    plotting = pd.read_csv(input_path + "plotting_df.csv")
+    interesting_events = plotting["event"].unique()
 
-    path = f'results/incremental_models/{run}/{flag}'
+    path = f'results/attenuation_factor/{run}/{flag}'
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"Path: {path} created!")
@@ -60,31 +57,32 @@ def main():
         # Here implement all these fantastic types of models :)
         # age + sex + Total_chol...
         # age + sex + Total_chol... + HDL_chol...
-        formulae = get_formulae(run)
+        formulae = get_formulae()
 
-        for formula in formulae:
-            path = f'results/incremental_models/{run}/{flag}'
-            tmp = formula.replace('*', 'x')
-            path = path + "/" + tmp.replace('+', '_') + "/"
+        sig_proteins = plotting[plotting["event"] == event]
+        sig_proteins = sig_proteins[sig_proteins["both_significant"] == "no"]
+        ids = sig_proteins["id"]
 
-            if not os.path.exists(path):
-                os.makedirs(path)
-                print(f"Path: {path} created!")
+        full = []
 
-            full = []
-            for protein in proteins.columns:
+        for protein in ids:
+            for formula in formulae:
                 print(protein)
                 cph = CoxPHFitter()
                 cph.fit(df, duration_col='tte', event_col='event', formula=formula.replace('protein', protein))
                 row = summary_and_test(cph, protein, df)
+                row["formula"] = formula
+                row["event"] = event
+                row["covar"] = protein
+                row["feature"] = protein
                 full.append(row)
                 # concordance?
-        # %%
-            results = pd.DataFrame(full)
-            results = pd.merge(annots, results, left_on="id", right_on="feature", how="inner")
-            results.drop('feature', axis=1, inplace=True)
-            results.rename(columns={"Name": "name"}, inplace=True)
-            results.to_csv(path + f"/full_{event}_{run}.csv")
+
+        results = pd.DataFrame(full)
+        results = pd.merge(annots, results, left_on="id", right_on="feature", how="inner")
+        results.drop('feature', axis=1, inplace=True)
+        results.rename(columns={"Name": "name"}, inplace=True)
+        results.to_csv(path + f"/attenuation_factor_{event}_{run}.csv")
 
 
 if __name__ == "__main__":
