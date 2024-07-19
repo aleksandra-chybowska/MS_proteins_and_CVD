@@ -25,21 +25,21 @@ def get_formulae(run="agesex", additional_params=None):
     return formulae
 
 
-def event_dict(flag, events):
+def event_dict(flag, events, type):
     ret_dict = {}
 
     for event in events:
-        cox_path = f"results/cox/{flag}/prepped/cox_{flag}_{event}_prepped.csv"
+        cox_path = f"results/cox/{type}/cox_{flag}_{event}_prepped.csv"
         ret_dict[event] = pd.read_csv(cox_path)
         ret_dict[event].set_index("id", inplace=True)
 
     return ret_dict
 
 
-def process_proteins(annots, events, feature, flag, interesting_events, protein, proteins, run):
+def process_proteins(annots, events, feature, flag, interesting_events, protein, proteins, run, type):
 
     for event in interesting_events:
-        path = f'results/incremental_parallel/{flag}/{run}/{event}'
+        path = f'results/incremental_parallel/{flag}/{run}/{type}/{event}'
         if not os.path.exists(path):
             os.makedirs(path)
             print(f"Path: {path} created!")
@@ -70,20 +70,21 @@ def process_proteins(annots, events, feature, flag, interesting_events, protein,
 def main():
 
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    run = "agesex_interaction"
+    type = "30-70"
+    # run = "agesex_interaction"
     # feature = "sex[T.M]:protein"
-    #run = "agesex"
+    run = "agesex"
     feature = "protein"
     cores = int(mp.cpu_count() * 0.8)
     print(f"Used cores: {cores}")
-    proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8491.csv')
+    proteins = pd.read_csv('results/cox/30-70/proteins_hosp_all_events_scaled_10471.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
     interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
                            "tia", "composite_CVD", "CVD_death", "death"]
-    events = event_dict(flag, interesting_events)
+    events = event_dict(flag, interesting_events, type)
 
-    path = f'results/incremental_parallel/{flag}/{run}'
+    path = f'results/incremental_parallel/{flag}/{run}/{type}'
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"Path: {path} created!")
@@ -96,7 +97,7 @@ def main():
     with mp.Pool(cores) as pool:
         for protein in proteins.columns:
             pool.apply_async(process_proteins,
-                             args=(annots, events, feature, flag, interesting_events, protein, proteins, run,),
+                             args=(annots, events, feature, flag, interesting_events, protein, proteins, run, type,),
                              callback=update)
         pool.close()
         pool.join()

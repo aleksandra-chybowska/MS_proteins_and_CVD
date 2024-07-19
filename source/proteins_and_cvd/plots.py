@@ -12,21 +12,21 @@ import matplotlib.pyplot as plt
 # %%
 df_hf = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
 df_death = pd.read_csv("results/cox/hosp/prepped/cox_hosp_death_prepped.csv")
-proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
+proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8491.csv')
 annots = pd.read_csv("data/annotations/short_annots.csv")
+# proteins_sex_effect = ["P00751.H7C5H1.E7ETN3.B4E1Z4",  # for HF, complement C1
+#                        "P02768.A0A0C4DGB6.H7C013.A0A087WWT3.B7WNR0.C9JKR2",  # death, albumin
+#                        "P35542.A0A096LPE2",  # death, serum amyloid A-4 protein
+#                        "Q08380"]  # death, galectin binding protein
 proteins_sex_effect = ["P00751.H7C5H1.E7ETN3.B4E1Z4",  # for HF, complement C1
-                       "P02768.A0A0C4DGB6.H7C013.A0A087WWT3.B7WNR0.C9JKR2",  # death, albumin
-                       "P35542.A0A096LPE2",  # death, serum amyloid A-4 protein
-                       "Q08380"]  # death, galectin binding protein
+                       "P07360.Q5SQ08"]  # Complement component C8 gamma chain (G)
+
 # %%
 hf = pd.merge(df_hf, proteins, on="id")
 death = pd.merge(df_death, proteins, on="id")
 
 for protein in proteins_sex_effect:
-    df = death
-    if protein == "P00751.H7C5H1.E7ETN3.B4E1Z4":
-        df = hf
-
+    df = hf
     cph = CoxPHFitter()
     formula = (f"age+sex*{protein}+avg_sys+Total_cholesterol+HDL_cholesterol+pack_years+"
                f"rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
@@ -44,6 +44,7 @@ for protein in proteins_sex_effect:
               f"Females, {annot} (high)"]
 
     plot_partial_effects(cph, covars, typical_range, legend, save=True)
+    plot.save()
 
 # cph.hazard_ratios_.to_csv("results/incremental_parallel/hosp/agesex_interaction/hazard_ratios.csv")
 # cph.summary.to_csv("results/incremental_parallel/hosp/agesex_interaction/summary.csv")

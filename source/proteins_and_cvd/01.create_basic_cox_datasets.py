@@ -1,4 +1,5 @@
 # %%
+import os
 import pyreadr
 import pandas as pd
 import lib.string_date as sd
@@ -17,10 +18,10 @@ cvd_deaths = pd.read_csv("data/phenotypes/2024-02-23_cvd_deaths_df.csv")
 
 # %%
 flag = "hosp"  # hosp, hosp_gp_cons, hosp_gp
-output = f"results/cox/{flag}/"
+output = f"results/cox/basic/"
 
 # ### phenos ###
-# correlation between covariates checked in covar_corr_and_deaths.py
+# correlation between covariates checked in covar_corr_and_deaths.py - I will additionally check VIF too
 pheno["gs_appt"] = pheno.apply(lambda row: sd.year_month_to_date(row["y_appt"], row["m_appt"]), axis="columns")
 pheno = pheno[["id", "gs_appt", "age", "sex", "avg_sys", "Total_cholesterol",
                "HDL_cholesterol", "pack_years", "rheum_arthritis_Y", "diabetes_Y",
@@ -62,7 +63,7 @@ pheno.describe()
 pheno.info()
 pheno["dead"] = 0
 pheno.loc[~pheno['dod_ym'].isna(), 'dead'] = 1  # 1022 deaths
-# pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
+pheno.to_csv("data/transformed_input/generic_pheno.csv", index=False)
 # %%
 # diseases #
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos", "tia"]
@@ -89,6 +90,11 @@ pd.crosstab(cvd.Source, cvd.Disease, normalize="columns")
 cvd['Disease'].value_counts()
 
 dis_list = cvd.Disease.unique()
+# %%
+if not os.path.exists(output):
+    os.makedirs(output)
+    print(f"Path: {output} created!")
+
 # %%
 for outcome in dis_list:
     dis1 = cvd.query('Disease == @outcome').copy().reset_index(drop=True)  # for composite_CVD it is 2221

@@ -39,7 +39,7 @@ def main():
                                             axis=1)
         plotting = pd.concat([plotting, tmp], axis="rows")
 
-    plotting["att"] = plotting.apply(lambda row: 100 - ((np.log10(row["hr_full"]) * 100) / np.log10(row["hr_basic"])),
+    plotting["att"] = plotting.apply(lambda row: 100 - ((np.log(row["hr_full"]) * 100) / np.log10(row["hr_basic"])),
                                      axis=1)
     plotting.to_csv(path + "plotting_df_new.csv", index=False)
     #

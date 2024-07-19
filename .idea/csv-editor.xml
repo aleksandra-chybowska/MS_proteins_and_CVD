@@ -101,6 +101,20 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\attenuation_factor\agesex\hosp\attenuation_factor_chd_nos_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\attenuation_factor\agesex\hosp\attenuation_factor_composite_CVD_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\cox\hosp\hosp_CVD_death.csv">
           <value>
             <Attribute>
@@ -207,6 +221,41 @@
           </value>
         </entry>
         <entry key="\results\cox\hosp\prepped\cox_hosp_tia_prepped.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\prepped\myTable.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\prepped\report.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\hosp\prepped\report_pt2.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\merged_results_bonf_significant_full.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex_interaction\merged_results_bonf_significant_full.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

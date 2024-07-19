@@ -4,8 +4,8 @@ import pandas as pd
 from pathlib import Path
 
 
-path = "results/incremental_parallel_deaths/hosp/agesex_interaction"
-csv_folder = Path(path)  # path to your folder, e.g. to `2022`
+path = "results/incremental_parallel/hosp/agesex_interaction"
+csv_folder = Path(path)
 
 df = pd.concat(pd.read_csv(p) for p in csv_folder.glob('*/*.csv'))
 df = df.iloc[:, 1:]

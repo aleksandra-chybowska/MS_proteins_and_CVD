@@ -3,19 +3,21 @@ library("tidyverse")
 library("data.table")
 library("tidytext")
 
-setwd("C:/Users/s1654019/Projects/python/proteins/results/")
-results = "_old/incremental_parallel_correct/hosp/agesex/merged_results.csv"
-deaths = "_old/incremental_parallel_deaths/hosp/agesex/merged_results.csv"
+# setwd("C:/Users/s1654019/Projects/python/proteins/results/")
+# results = "_old/incremental_parallel_correct/hosp/agesex/merged_results.csv"
+# deaths = "_old/incremental_parallel_deaths/hosp/agesex/merged_results.csv"
+setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/")
+ds = read_csv("merged_results.csv")
+
 
 ## Load data
 ####################################################################
 bonf = 0.05/439
-pheno = fread(results)
-pheno = pheno[,c(-1)]
-pheno = pheno %>% filter(event != "CVD_death") # remove CVD_death
-deaths = fread(deaths)
-
-ds = rbind(pheno, deaths)
+# pheno = fread(results)
+# pheno = pheno[,c(-1)]
+# pheno = pheno %>% filter(event != "CVD_death") # remove CVD_death
+# deaths = fread(deaths)
+# ds = rbind(pheno, deaths)
 
 # find only significant 
 full_mod = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol",
@@ -37,20 +39,40 @@ plotting_heart = ds %>%
   filter(id %in% sig_heart$id) %>%
   mutate(group = "Cardiovascular Diseases")
 
+# order by HRs for heart failure
+ordering_heart = plotting_heart %>%
+  filter(event == "composite_CVD") %>%
+  select(name, hr) %>%
+  rename(ob = hr)
+
+plotting_heart = left_join(plotting_heart, ordering_heart, by="name")
+
 plotting_death = ds %>% 
   filter(formula == full_mod) %>% 
   filter(event %in% death) %>%
   filter(id %in% sig_death$id) %>%
   mutate(group = "Death")
 
+# order by HRs for death
+ordering_death = plotting_death %>%
+  filter(event == "CVD_death") %>%
+  select(name, hr) %>%
+  rename(ob = hr)
+
+plotting_death = left_join(plotting_death, ordering_death, by="name")
+
 plotting = rbind(plotting_heart, plotting_death) 
 plotting = plotting %>% 
   mutate(shape = ifelse(p<bonf, "triangle", "circle"))
 
+## TODO: adjusting for relatedness fix
+
+## TODO: remove items that do not meet cox assumptions
 
 
 ## Prep a plotting ds
 ####################################################################
+
 dict = c("composite_CVD" = "Composite CVD",
          "CVD_death" = "CVD death",
          "death" = "Death",
@@ -64,9 +86,11 @@ out_cont = data.frame(Outcome=plotting$name,
                       UCI=plotting$uci,
                       stringsAsFactors=FALSE,
                       Shape=plotting$shape,
-                      Group=plotting$group)
+                      Group=plotting$group, 
+                      OB = plotting$ob)
+
 out_cont = out_cont %>% 
-  mutate(Outcome = reorder_within(Outcome, Beta, Group))
+  mutate(Outcome = reorder_within(Outcome, OB, Group))
 
 
 # out_cont_heart = out_cont %>% filter(Group == "Cardiovascular Diseases")
@@ -112,7 +136,7 @@ stacked = ggplot(out_cont,
   guides(shape = "none") + color_palette
 
 stacked
-
+# stop()
 library(grid)
 gt = ggplot_gtable(ggplot_build(stacked))
 gt$heights[10] = 0.5*gt$heights[10]
