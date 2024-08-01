@@ -10,48 +10,6 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\._mass_spec_proteins_annotations.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="#1e#" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\._short_annots.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="#1e#" />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\_old\mass_spec_proteins_annotations.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\_old\short_annots_old.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\jure_extended\proteins_annots.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="U:\Ola\Lab\Proteins\annotations\short_annots.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
         <entry key="\data\annotations\short_annots.csv">
           <value>
             <Attribute>
@@ -60,6 +18,13 @@
           </value>
         </entry>
         <entry key="\data\disease\cvd_deaths.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\data\phenotypes\2022-01-17_pedigree.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -109,6 +74,20 @@
           </value>
         </entry>
         <entry key="\results\attenuation_factor\agesex\hosp\attenuation_factor_composite_CVD_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\attenuation_factor\agesex\hosp\attenuation_factor_tia_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\cox\40-69\cox_hosp_hf_prepped.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -248,14 +227,28 @@
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_parallel\hosp\agesex\merged_results_bonf_significant_full.csv">
+        <entry key="\results\incremental_parallel\hosp\agesex\39-69\merged_results_bonf_significant_full.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
             </Attribute>
           </value>
         </entry>
-        <entry key="\results\incremental_parallel\hosp\agesex_interaction\merged_results_bonf_significant_full.csv">
+        <entry key="\results\incremental_parallel\hosp\agesex\40-69\merged_results.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\40-69\merged_results_bonf_significant.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\40-69\merged_results_bonf_significant_full.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

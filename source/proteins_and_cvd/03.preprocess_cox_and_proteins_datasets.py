@@ -14,7 +14,7 @@ from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 
 flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-run = "30-70"
+run = "40-69"
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
                       "tia", "composite_CVD", "CVD_death", "death"]
@@ -54,7 +54,7 @@ for event in interesting_events:
     cox['pack_years'] = outlier_trim(np.log(cox["pack_years"]+1), cut=4)
     cox.dropna(inplace=True)
 
-    cox = cox.query('age <= 70 and age >= 30')
+    cox = cox.query('age <= 69 and age >= 40')
     cph = CoxPHFitter()
     cph.fit(cox, duration_col='tte', event_col='event',
             formula=f"age+sex+Total_cholesterol+HDL_cholesterol+"
@@ -78,40 +78,41 @@ proteins.to_csv(f"{path}/proteins_{flag}_all_events_scaled_{len(cox)}.csv")
 
 # basic models solved!
 #%%
-plt.hist(cox["bmi"])
-plt.title("BMI")
-plt.show()
-
-plt.hist(cox["avg_sys"])
-plt.title("AVG_SYS")
-plt.show()
-
-plt.hist(cox["pack_years"])
-plt.title("PY")
-plt.show()
-
-plt.boxplot(cox_plotting["Total_cholesterol"])
-plt.title("Total cholesterol")
-plt.show()
-
-plt.boxplot(cox_plotting["HDL_cholesterol"])
-plt.title("HDL cholesterol")
-plt.show()
-#%%
-cox_plotting["Total_cholesterol"] = outlier_trim(np.log10(cox_plotting["Total_cholesterol"]), cut=3)
-cox_plotting["HDL_cholesterol"] = outlier_trim(np.log10(cox_plotting["HDL_cholesterol"]), cut=3)
-cox_plotting.dropna(inplace=True)
-
-plt.boxplot(cox_plotting["HDL_cholesterol"])
-plt.title("HDL cholesterol")
-plt.show()
-
-plt.boxplot(cox_plotting["Total_cholesterol"])
-plt.title("Total cholesterol")
-plt.show()
+# plt.hist(cox["bmi"])
+# plt.title("BMI")
+# plt.show()
+#
+# plt.hist(cox["avg_sys"])
+# plt.title("AVG_SYS")
+# plt.show()
+#
+# plt.hist(cox["pack_years"])
+# plt.title("PY")
+# plt.show()
+#
+# plt.boxplot(cox_plotting["Total_cholesterol"])
+# plt.title("Total cholesterol")
+# plt.show()
+#
+# plt.boxplot(cox_plotting["HDL_cholesterol"])
+# plt.title("HDL cholesterol")
+# plt.show()
+# #%%
+# cox_plotting["Total_cholesterol"] = outlier_trim(np.log10(cox_plotting["Total_cholesterol"]), cut=3)
+# cox_plotting["HDL_cholesterol"] = outlier_trim(np.log10(cox_plotting["HDL_cholesterol"]), cut=3)
+# cox_plotting.dropna(inplace=True)
+#
+# plt.boxplot(cox_plotting["HDL_cholesterol"])
+# plt.title("HDL cholesterol")
+# plt.show()
+#
+# plt.boxplot(cox_plotting["Total_cholesterol"])
+# plt.title("Total cholesterol")
+# plt.show()
 
 
 # calculate variance inflation factor for predictors
+# %%
 X = cox[['age',
          'sex',
          'Total_cholesterol',
@@ -125,10 +126,25 @@ X = cox[['age',
 # Include your predictors here
 X = add_constant(X)  # Add a constant term for the intercept
 X['sex'] = X['sex'].replace({'M': 1, 'F': 0})
-X = np.array(X, dtype=float)
+
 # Calculate VIF for each predictor
 vif_data = pd.DataFrame()
 vif_data["feature"] = X.columns
 vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
 
 print(vif_data)
+
+# Most recent data
+
+#              feature         VIF
+# 0               const  116.202773
+# 1                 age    1.125876
+# 2                 sex    1.291402
+# 3   Total_cholesterol    1.105020
+# 4     HDL_cholesterol    1.225833
+# 5             avg_sys    1.168705
+# 6          pack_years    1.048833
+# 7   rheum_arthritis_Y    1.012567
+# 8          diabetes_Y    1.068494
+# 9                rank    1.059555
+# 10            on_pill    1.080353

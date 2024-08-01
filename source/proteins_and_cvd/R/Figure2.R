@@ -6,7 +6,7 @@ library("tidytext")
 # setwd("C:/Users/s1654019/Projects/python/proteins/results/")
 # results = "_old/incremental_parallel_correct/hosp/agesex/merged_results.csv"
 # deaths = "_old/incremental_parallel_deaths/hosp/agesex/merged_results.csv"
-setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/")
+setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/40-69/")
 ds = read_csv("merged_results.csv")
 
 
@@ -25,6 +25,9 @@ full_mod = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol",
 
 # list of proteins that are significant in full models
 sig_proteins = ds %>% filter(formula == full_mod) %>% filter(p < bonf) 
+table(sig_proteins$test_p < 0.05) # 4 of 47 dont meet coxph
+
+
 heart = c("hf", 
           "composite_CVD")
 death = c("death", "CVD_death")
@@ -62,13 +65,24 @@ ordering_death = plotting_death %>%
 plotting_death = left_join(plotting_death, ordering_death, by="name")
 
 plotting = rbind(plotting_heart, plotting_death) 
+# plotting = plotting %>% 
+#   mutate(shape = ifelse(p<bonf, "triangle", "circle"))
+
 plotting = plotting %>% 
-  mutate(shape = ifelse(p<bonf, "triangle", "circle"))
+  mutate(shape = as.factor(case_when(
+    p < bonf & test_p >= 0.05 ~ 17, #"full_triangle",
+    p < bonf & test_p < 0.05 ~ 2, # "open_triangle"
+    p >= bonf & test_p >= 0.05 ~ 19, # "full_circle",
+    p >= bonf & test_p < 0.05 ~ 1 # "open_circle",
+  ))
+)
 
 ## TODO: adjusting for relatedness fix
 
 ## TODO: remove items that do not meet cox assumptions
+dim(subset(plotting, test_p<0.05)) # 10
 
+#plotting = filter(plotting, plotting$test_p>0.05)
 
 ## Prep a plotting ds
 ####################################################################
@@ -131,7 +145,9 @@ stacked = ggplot(out_cont,
   xlab ("") +
   theme_bw() +
   geom_hline(yintercept = 1, linetype = "dotted")+
-  coord_flip() + scale_x_reordered() + My_Theme + 
+  coord_flip() + scale_x_reordered() + 
+  scale_shape_manual(values = c(1, 2, 17, 19)) +
+  My_Theme + 
   facet_wrap(~Group, ncol = 1, scales = "free_y") +
   guides(shape = "none") + color_palette
 
@@ -143,7 +159,7 @@ gt$heights[10] = 0.5*gt$heights[10]
 grid.draw(gt)
 
 setwd("~/Desktop")
-png(paste0("Stacked_Forest_plot_heart.png"), height = 880, width=720)
+png(paste0("Stacked_Forest_plot_heart_mapped.png"), height = 880, width=720)
 grid.draw(gt)
 dev.off()
 

@@ -70,14 +70,14 @@ def process_proteins(annots, events, feature, flag, interesting_events, protein,
 def main():
 
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
-    type = "30-70"
+    type = "40-69"
     # run = "agesex_interaction"
     # feature = "sex[T.M]:protein"
     run = "agesex"
     feature = "protein"
     cores = int(mp.cpu_count() * 0.8)
     print(f"Used cores: {cores}")
-    proteins = pd.read_csv('results/cox/30-70/proteins_hosp_all_events_scaled_10471.csv')
+    proteins = pd.read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8332.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
     interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",
