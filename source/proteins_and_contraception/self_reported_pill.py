@@ -36,7 +36,7 @@ for protein in females_proteins.columns:
     model = sm.OLS(y, x).fit()
     summary = results_summary_to_dataframe(model)
     new_data = pd.DataFrame({"Protein": [protein],
-                             "Coef": [summary.loc[feature, 'coeff']],
+                             "Coef": [summary.loc[feature, 'coef']],
                              "P": [summary.loc[feature, 'pvals']]})
     df = pd.concat([df, new_data], ignore_index=True)
 
@@ -47,7 +47,7 @@ df = pd.merge(df, annots, left_on="Protein", right_on="id", right_index=False).d
 df = df.sort_values(by='P', ascending=True)
 df.loc[df.P < 0.05]  # 204 rows
 
-bonf = 0.05/len(females_proteins)  # 66 rows
+bonf = 0.05/len(females_proteins.columns)  # 66 rows
 corrected = df.loc[df.P < bonf]
 
 df.to_csv("results/proteins_that_vary_with_pill.csv", index=False)

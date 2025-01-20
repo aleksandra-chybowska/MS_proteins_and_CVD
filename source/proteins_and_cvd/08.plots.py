@@ -4,22 +4,20 @@ import pandas as pd
 from lifelines import CoxPHFitter, KaplanMeierFitter
 from lib.cox import plot_partial_effects
 import matplotlib.pyplot as plt
+from contextlib import redirect_stdout
 
 
 # %%
 # Protein * sex interaction term effect
 # Protein: P00751.H7C5H1.E7ETN3.B4E1Z4
 # %%
-df_hf = pd.read_csv("results/cox/hosp/prepped/cox_hosp_hf_prepped.csv")
-df_death = pd.read_csv("results/cox/hosp/prepped/cox_hosp_death_prepped.csv")
-proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8491.csv')
+df_hf = pd.read_csv("results/cox/40-69/cox_hosp_hf_prepped.csv")
+df_death = pd.read_csv("results/cox/40-69/cox_hosp_death_prepped.csv")
+proteins = pd.read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8343.csv')
 annots = pd.read_csv("data/annotations/short_annots.csv")
-# proteins_sex_effect = ["P00751.H7C5H1.E7ETN3.B4E1Z4",  # for HF, complement C1
-#                        "P02768.A0A0C4DGB6.H7C013.A0A087WWT3.B7WNR0.C9JKR2",  # death, albumin
-#                        "P35542.A0A096LPE2",  # death, serum amyloid A-4 protein
-#                        "Q08380"]  # death, galectin binding protein
-proteins_sex_effect = ["P00751.H7C5H1.E7ETN3.B4E1Z4",  # for HF, complement C1
-                       "P07360.Q5SQ08"]  # Complement component C8 gamma chain (G)
+sex_effects = pd.read_csv("results/incremental_parallel/hosp/" +
+                          "agesex_interaction/40-69/merged_results_bonf_significant_full.csv")
+proteins_sex_effect = sex_effects['id']
 
 # %%
 hf = pd.merge(df_hf, proteins, on="id")
@@ -44,7 +42,34 @@ for protein in proteins_sex_effect:
               f"Females, {annot} (high)"]
 
     plot_partial_effects(cph, covars, typical_range, legend, save=True)
-    plot.save()
+
+    # now divide into males and females and re-run
+
+    df_males = df[df.sex == "M"]
+
+    cph = CoxPHFitter()
+    formula = (f"age+sex+{protein}+avg_sys+Total_cholesterol+HDL_cholesterol+pack_years+"
+               f"rheum_arthritis_Y+diabetes_Y+years+rank")
+
+    cph.fit(df_males, duration_col='tte', event_col='event', formula=formula)
+
+    with open("results/incremental_parallel/hosp/agesex_interaction/40-69/modelsummary_males.txt", 'w') as f:
+        with redirect_stdout(f):
+            cph.print_summary()
+
+    df_females = df[df.sex == "F"]
+
+    cph = CoxPHFitter()
+    formula = (f"age+sex+{protein}+avg_sys+Total_cholesterol+HDL_cholesterol+pack_years+"
+               f"rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
+
+    cph.fit(df_females, duration_col='tte', event_col='event', formula=formula)
+
+    with open("results/incremental_parallel/hosp/agesex_interaction/40-69/modelsummary_females.txt", 'w') as f:
+        with redirect_stdout(f):
+            cph.print_summary()
+
+
 
 # cph.hazard_ratios_.to_csv("results/incremental_parallel/hosp/agesex_interaction/hazard_ratios.csv")
 # cph.summary.to_csv("results/incremental_parallel/hosp/agesex_interaction/summary.csv")
@@ -86,8 +111,8 @@ plt.show()
 
 # cross plot
 analysis_type = "plotly_express"
-path = "results/incremental_parallel_deaths/hosp/agesex/"
-plotting = pd.read_csv(path + "plotting_df.csv")
+path = "results/incremental_parallel/hosp/agesex/40-69/"
+plotting = pd.read_csv(path + "plotting_df_new.csv")
 
 # %%
 if analysis_type == "plotly_express":

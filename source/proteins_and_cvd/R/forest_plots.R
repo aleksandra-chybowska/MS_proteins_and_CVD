@@ -8,7 +8,7 @@ library(tidytext)
 # 
 # cvd_and_deaths = read_csv("Merged_results_deaths_and_CVD.csv")
 
-setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/")
+setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/40-69")
 cvd_and_deaths = read_csv("merged_results_bonf_significant_full.csv")
 x = cvd_and_deaths
 dict = c("composite_CVD" = "Composite CVD",

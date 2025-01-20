@@ -68,7 +68,7 @@ plotting = rbind(plotting_heart, plotting_death)
 # plotting = plotting %>% 
 #   mutate(shape = ifelse(p<bonf, "triangle", "circle"))
 
-plotting = plotting %>% 
+plotting = plotting %>%
   mutate(shape = as.factor(case_when(
     p < bonf & test_p >= 0.05 ~ 17, #"full_triangle",
     p < bonf & test_p < 0.05 ~ 2, # "open_triangle"
@@ -77,12 +77,10 @@ plotting = plotting %>%
   ))
 )
 
-## TODO: adjusting for relatedness fix
-
-## TODO: remove items that do not meet cox assumptions
 dim(subset(plotting, test_p<0.05)) # 10
 
-#plotting = filter(plotting, plotting$test_p>0.05)
+
+plotting = filter(plotting, plotting$test_p>0.05)
 
 ## Prep a plotting ds
 ####################################################################
@@ -146,7 +144,7 @@ stacked = ggplot(out_cont,
   theme_bw() +
   geom_hline(yintercept = 1, linetype = "dotted")+
   coord_flip() + scale_x_reordered() + 
-  scale_shape_manual(values = c(1, 2, 17, 19)) +
+  # scale_shape_manual(values = c(1, 2, 17, 19)) +
   My_Theme + 
   facet_wrap(~Group, ncol = 1, scales = "free_y") +
   guides(shape = "none") + color_palette

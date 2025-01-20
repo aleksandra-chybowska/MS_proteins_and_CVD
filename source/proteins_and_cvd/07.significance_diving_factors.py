@@ -10,7 +10,7 @@ import sys
 import pandas as pd
 from lifelines import CoxPHFitter
 
-sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins')
+sys.path.append('/Cluster_Filespace/Marioni_Group/Ola/Code/general/projects/proteins/')
 from lib.cox import extract_cox_coefs, summary_and_test
 
 
@@ -31,16 +31,17 @@ def get_formulae():
 def main():
     # %%
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
+    type = "40-69"
     run = "agesex"
-    input_path = "results/incremental_parallel_correct/hosp/agesex/"
+    input_path = f'results/incremental_parallel/{flag}/{run}/{type}'
 
-    proteins = pd.read_csv('results/cox/hosp/prepped/proteins_hosp_all_events_scaled_8660.csv')
+    proteins = pd.read_csv(f"results/cox/{type}/proteins_hosp_all_events_scaled_8343.csv")
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
-    plotting = pd.read_csv(input_path + "plotting_df.csv")
+    plotting = pd.read_csv(input_path + "/plotting_df_new.csv")
     interesting_events = plotting["event"].unique()
 
-    path = f'results/attenuation_factor/{run}/{flag}'
+    path = f'results/attenuation_factor/{flag}/{run}/{type}'
     if not os.path.exists(path):
         os.makedirs(path)
         print(f"Path: {path} created!")
@@ -49,7 +50,7 @@ def main():
     for event in interesting_events:
         print(event)
         print()
-        cox_path = f"results/cox/{flag}/prepped/cox_{flag}_{event}_prepped.csv"
+        cox_path = f"results/cox/{type}/cox_{flag}_{event}_prepped.csv"
         cox = pd.read_csv(cox_path)
         cox.set_index("id", inplace=True)
         df = pd.merge(proteins, cox, how="inner", left_index=True, right_index=True)

@@ -47,4 +47,4 @@ plt.xlabel('Event Combinations')
 plt.ylabel('Number of Individuals')
 
 upset.plot()
-plt.savefig(f"plots/upset.png")
+plt.savefig(f"plots/upset_new.png")

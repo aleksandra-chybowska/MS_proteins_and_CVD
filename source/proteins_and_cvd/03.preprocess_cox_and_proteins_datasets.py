@@ -43,18 +43,19 @@ for event in interesting_events:
     cox = cox[cox["id"].isin(indexes)]
     cox = cox[['id', 'age', 'sex', 'avg_sys', 'Total_cholesterol',
                'HDL_cholesterol', 'pack_years', 'rheum_arthritis_Y', 'diabetes_Y',
-               'bmi', 'years', 'rank', 'event', 'tte', 'on_pill']]
+               'bmi', 'years', 'rank', 'event', 'tte', 'on_pill', 'dead']]
     cox["sex"] = pd.Categorical(cox["sex"])
     cox_plotting = cox.copy()
+
+    cox = cox.query('age <= 69 and age >= 40') # filtering by age range before removing outliers
 
     cox["HDL_cholesterol"] = outlier_trim(cox["HDL_cholesterol"], cut=4)
     cox["Total_cholesterol"] = outlier_trim(cox["Total_cholesterol"], cut=4)
     cox['bmi'] = np.where((cox['bmi'] < 18) | (cox['bmi'] > 50), np.NaN, np.log(cox['bmi']))
     cox['avg_sys'] = outlier_trim(cox["avg_sys"], cut=4)
     cox['pack_years'] = outlier_trim(np.log(cox["pack_years"]+1), cut=4)
-    cox.dropna(inplace=True)
+    cox.dropna(inplace=True) # 13173
 
-    cox = cox.query('age <= 69 and age >= 40')
     cph = CoxPHFitter()
     cph.fit(cox, duration_col='tte', event_col='event',
             formula=f"age+sex+Total_cholesterol+HDL_cholesterol+"
@@ -131,20 +132,20 @@ X['sex'] = X['sex'].replace({'M': 1, 'F': 0})
 vif_data = pd.DataFrame()
 vif_data["feature"] = X.columns
 vif_data["VIF"] = [variance_inflation_factor(X.values, i) for i in range(X.shape[1])]
-
+vif_data.to_csv(f"{path}/VIF.csv", index=False)
 print(vif_data)
 
 # Most recent data
 
-#              feature         VIF
-# 0               const  116.202773
-# 1                 age    1.125876
-# 2                 sex    1.291402
-# 3   Total_cholesterol    1.105020
-# 4     HDL_cholesterol    1.225833
-# 5             avg_sys    1.168705
-# 6          pack_years    1.048833
-# 7   rheum_arthritis_Y    1.012567
-# 8          diabetes_Y    1.068494
-# 9                rank    1.059555
-# 10            on_pill    1.080353
+#               feature         VIF
+# 0               const  115.515962
+# 1                 age    1.126923
+# 2                 sex    1.288705
+# 3   Total_cholesterol    1.105469
+# 4     HDL_cholesterol    1.223793
+# 5             avg_sys    1.168401
+# 6          pack_years    1.048611
+# 7   rheum_arthritis_Y    1.012543
+# 8          diabetes_Y    1.068475
+# 9                rank    1.059551
+# 10            on_pill    1.080255

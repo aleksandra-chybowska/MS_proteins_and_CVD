@@ -5,6 +5,8 @@ library("data.table")
 setwd("C:/Users/s1654019/Projects/python/proteins/results/")
 results = "_old/incremental_parallel_correct/hosp/agesex/merged_results.csv"
 deaths = "_old/incremental_parallel_deaths/hosp/agesex/merged_results.csv"
+all = "incremental_parallel/hosp/agesex/40-69/merged_results.csv"
+flag = "all"
 # path = "/Cluster_Filespace/Marioni_Group/Ola/Smoking/BayesR_EpiScore/data/"
 # neuro_path = "/Cluster_Filespace/Marioni_Group/Ola/Smoking/Neuroimaging/"
 
@@ -16,38 +18,75 @@ transform = function(x) {
 ## Load brain data
 ####################################################################
 bonf = 0.05/439
-pheno = fread(results)
-pheno = pheno[,c(-1)]
-pheno = pheno %>% filter(event != "CVD_death") # remove CVD_death
-deaths = fread(deaths)
 
-ds = rbind(pheno, deaths)
+if (flag == "all") {
+  print("Reading all.")
+  ds = fread(all)
+} else {
+  print("Reading deaths and CVD events separately.")
+  pheno = fread(results)
+  pheno = pheno[,c(-1)]
+  pheno = pheno %>% filter(event != "CVD_death") # remove CVD_death
+  deaths = fread(deaths)
+  
+  ds = rbind(pheno, deaths)
+}
 
 # find only significant 
 full_mod = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol",
                   "+pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
-sig_proteins = ds %>% filter(formula == full_mod) %>% filter(p < bonf) # list of proteins that are significant in full models
-ids = sig_proteins$id
-
-plotting = ds %>% filter(formula == full_mod) %>% filter(id %in% ids)
 
 table(plotting$event)
-heart = c("chd_nos", "myocardial_infarction", "hf")
-brain = c("tia", "isch_stroke")
-heart_without_hf = c("chd_nos", "myocardial_infarction", "composite_CVD")
+heart = c("chd_nos", "myocardial_infarction", "composite_CVD")
+brain = c("tia", "isch_stroke", "composite_CVD")
 death = c("death", "CVD_death")
+
+plotting = ds %>%
+  filter(formula == full_mod) %>%
+  filter(event %in% death)
+
+sig_proteins = plotting %>% filter(p < bonf) # list of proteins that are significant in full models
+ids = sig_proteins$id
+
+plotting = plotting %>% filter(id %in% ids)
+
 
 ## Variable distribution check, remove NAs, scale
 ####################################################################
-plotting = ds %>% filter(formula == full_mod) %>% filter(id %in% ids)
-plotting = plotting %>% filter(event %in% heart)
+dict = c("composite_CVD" = "Composite CVD",
+         "CVD_death" = "CVD death",
+         "death" = "Death",
+         "hf" = "Heart Failure", 
+         "tia" = "Transient Ischaemic Attack", 
+         "isch_stroke" = "Stroke",
+         "myocardial_infarction" = "Myocardial Infarction",
+         "chd_nos" = "Coronary Heart Disease")
+
 out_cont = data.frame(Outcome=plotting$name, 
-                      Predictor=plotting$event,
+                      Predictor=dict[plotting$event],
                       Beta=plotting$hr,
                       P=plotting$p, 
                       LCI=plotting$lci,
                       UCI=plotting$uci,
                       stringsAsFactors=FALSE)
+
+## Sort the data by HR (Beta) in descending order
+out_cont <- out_cont %>%
+  arrange(Beta)
+
+## Reorder the Outcome factor based on the sorted HR
+out_cont$Outcome <- factor(out_cont$Outcome, levels = unique(out_cont$Outcome))
+
+color_scale <- c(
+  "Myocardial Infarction" = "#c77cff",   # Light purple
+  "Coronary Heart Disease" = "#f3b772",  # Soft orange
+  "Transient Ischaemic Attack" = "#00bfc4",  # Teal
+  "Stroke" = "#7CAE00",  # Green
+  "Composite CVD" = "#f8766d",  # Coral
+  "Death" = "#00B0F6",  # Bright blue
+  "CVD death" = "#E76BF3"  # Pink
+)
+
 
 ## Prep plot
 ####################################################################
@@ -76,9 +115,9 @@ stacked = ggplot(out_cont,aes(y=Beta, x=Outcome, group=Predictor, colour=Predict
   geom_hline(yintercept = 1, linetype = "dotted")+
   theme(axis.text.x = element_text(size = 8, vjust = 0.5), axis.text.y = element_text(size = 8), legend.position = "right",
         plot.title = element_text(size = 8))+ theme(legend.title = element_text(hjust = 0.5)) +
-  coord_flip() + My_Theme
+  coord_flip() + My_Theme + scale_colour_manual(values = color_scale)
 
-
-pdf(paste0("Forest_plot_heart.pdf"), height = 30, width = 10)
+setwd("C:/Users/s1654019/Projects/python/proteins/plots/")
+pdf(paste0("Forest_plot_death.pdf"), height = 10, width = 8) # 12 and 5
 stacked
 dev.off()

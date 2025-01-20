@@ -5,6 +5,7 @@ library(coxme)
 library(tidyverse)
 library(data.table)
 library(gridExtra)
+
 extract_coxme_table <- function (mod){
   beta <- mod$coefficients #$fixed is not needed
   hr <-exp(beta)
@@ -128,8 +129,8 @@ for (i in 1:nrow(sig_proteins)) {
 
   print(P1 + ggtitle(paste0("Cox residuals for ", row$name, "\n(", protein_name, ")")))
   
-  grid.arrange(P2[[1]], P3[[1]], P4[[1]], P5[[1]], P5[[2]], P5[[3]], P6[[1]], P7[[1]],
-               top = "Martingale Residuals \nof Null Cox Model", nrow = 4, ncol = 2)
+  print(grid.arrange(P2[[1]], P3[[1]], P4[[1]], P5[[1]], P5[[2]], P5[[3]], P6[[1]], P7[[1]],
+               top = "Martingale Residuals \nof Null Cox Model", nrow = 4, ncol = 2))
   
   print(ggcoxzph(test.ph, newpage = FALSE, point.size=0.4, font.main = 8,
            font.submain =8,

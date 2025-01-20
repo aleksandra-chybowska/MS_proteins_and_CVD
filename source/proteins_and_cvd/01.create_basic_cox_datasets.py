@@ -13,8 +13,8 @@ medications = pd.read_table("data/disease/medications/all_CVD_prescriptions.txt"
 pheno = pyreadr.read_r("data/phenotypes/GS_phenos_internal_with_DST_28Nov2023_REM.rds")[None]  # 24079
 diseases = pd.read_csv("data/phenotypes/2023-08-22_disease_codes_combined.csv")
 females = read_parquet("data/transformed_input/females_on_pill.parquet")
-deaths = pd.read_csv("data/phenotypes/2024-02-23_deaths_df.csv")
-cvd_deaths = pd.read_csv("data/phenotypes/2024-02-23_cvd_deaths_df.csv")
+deaths = pd.read_csv("data/phenotypes/2025-01-13_deaths_df.csv")
+cvd_deaths = pd.read_csv("data/phenotypes/2025-01-13_cvd_deaths_df_welsh.csv")
 
 # %%
 flag = "hosp"  # hosp, hosp_gp_cons, hosp_gp
@@ -72,17 +72,17 @@ interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos", "
 cvd = diseases[diseases["Disease"].isin(interesting_events)]  # 5917 events
 cvd = cvd.loc[~((cvd["Disease"] == "hf") & (cvd["Source"] == "Primary_Care"))]  # 5539
 cvd.loc[cvd["Disease"] == "hf", "Source"].value_counts()
-cvd = pd.concat([cvd, cvd_deaths], ignore_index=True)
-cvd = pd.concat([cvd, deaths], ignore_index=True)
+cvd = pd.concat([cvd, cvd_deaths], ignore_index=True) # 6008
+cvd = pd.concat([cvd, deaths], ignore_index=True) # 7030
 composite = cvd.query('Disease in ["isch_stroke", "chd_nos", "myocardial_infarction", "CVD_death"]').copy()
 composite["Disease"] = "composite_CVD"  # 4776
 # %%
 
 cvd = pd.concat([cvd, composite], ignore_index=True)
-cvd = cvd.query('incident == 1')  # 6933
+cvd = cvd.query('incident == 1')  # 6933 + 1022 deaths = 7955
 
 if flag == "hosp":
-    cvd = cvd.query('Source == "Secondary_Care"')
+    cvd = cvd.query('Source == "Secondary_Care"') # 5634
 if flag == "hosp_gp_cons":
     cvd = cvd.query('GP_Consent == 1')
 # %%

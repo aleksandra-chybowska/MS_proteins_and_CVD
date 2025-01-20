@@ -2,15 +2,18 @@ library(tidyverse)
 library(tableone)
 library(DataExplorer)
 
-setwd("~/Projects/python/proteins/results/cox/hosp/prepped/")
+setwd("~/Projects/python/proteins/results/cox/40-69")
 
 cvd = read_csv("cox_hosp_composite_CVD_prepped.csv")
 create_report(cvd)
 cvd$sex = ifelse(cvd$sex == 'M', 1, 0)
+cvd$pack_years = exp(cvd$pack_years) - 1# inverse log+1 transform
+cvd$bmi = exp(cvd$bmi)
 
-categorical = c("sex", "rheum_arthritis_Y", "diabetes_Y", "years")
+
+categorical = c("sex", "rheum_arthritis_Y", "diabetes_Y")
 continuous_normal = c("age", "avg_sys", "bmi", "Total_cholesterol")
-continuous_non_normal = c("HDL_cholesterol", "tte", "rank", "pack_years")
+continuous_non_normal = c("HDL_cholesterol", "tte", "rank", "pack_years", "years")
 all = c("age", "sex", "bmi", "rank", "diabetes_Y", 
         "rheum_arthritis_Y", "pack_years", "avg_sys", "Total_cholesterol", 
         "HDL_cholesterol", "years")
@@ -48,13 +51,14 @@ ds = list(
   tia = subset(read_csv("cox_hosp_tia_prepped.csv"), event==1)
 )
 
-setwd("~/Projects/python/proteins/results/incremental_parallel/hosp/agesex/")
+setwd("~//Projects/python/proteins/results/incremental_parallel/hosp/agesex/40-69")
 events = read_csv("merged_results.csv")
 basic = "age+sex+protein"
 full = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol+",
               "pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
 
 ### how many proteins significant, altogether?
+
 significant_sum = events %>% 
   filter(formula == full) %>%
   filter(p < 0.05/439) %>%

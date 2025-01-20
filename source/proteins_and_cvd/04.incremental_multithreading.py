@@ -71,13 +71,13 @@ def main():
 
     flag = "hosp"  # hosp_gp, hosp, hosp_gp_cons
     type = "40-69"
-    # run = "agesex_interaction"
-    # feature = "sex[T.M]:protein"
-    run = "agesex"
-    feature = "protein"
+    run = "agesex_interaction"
+    feature = "sex[T.M]:protein"
+    # run = "agesex"
+    # feature = "protein"
     cores = int(mp.cpu_count() * 0.8)
     print(f"Used cores: {cores}")
-    proteins = pd.read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8332.csv')
+    proteins = pd.read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8343.csv')
     annots = pd.read_csv("data/annotations/short_annots.csv")
     proteins.set_index("id", inplace=True)
     interesting_events = ["myocardial_infarction", "isch_stroke", "hf", "chd_nos",

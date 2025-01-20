@@ -8,7 +8,7 @@ from scipy.stats import spearmanr
 
 # %%
 # 17150
-pheno = pd.read_csv("data/transformed_input/generic_pheno.csv") # based on deaths_old, there's 1122 deaths in this file
+pheno = pd.read_csv("data/transformed_input/generic_pheno.csv") # based on deaths_old, there's 1022 deaths in this file
 proteins = pyreadr.read_r("data/phenotypes/GS_ProteinGroups_RankTransformed_23Aug2023.rds")[None]
 pheno.set_index("id", inplace=True)
 proteins.set_index("id", inplace=True)
@@ -38,7 +38,7 @@ plt.colorbar()
 plt.title('Correlation Matrix')
 plt.xticks(range(len(corr_matrix.columns)), corr_matrix.columns, rotation='vertical')
 plt.yticks(range(len(corr_matrix.columns)), corr_matrix.columns)
-plt.savefig("plots/corr_matrix.png")
+plt.savefig("plots/corr_matrix_2.png") # this is the same as before :)
 plt.show()
 
 # %%

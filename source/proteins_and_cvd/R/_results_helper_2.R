@@ -1,8 +1,9 @@
 library(tidyverse)
 
-setwd("~/Projects/python/proteins/results/attenuation_factor/agesex/hosp/")
+setwd("~/Projects/python/proteins/results/attenuation_factor/hosp/agesex/40-69")
 
 cvd = read_csv("attenuation_factor_composite_CVD_agesex.csv")
+unique(cvd$id)
 death = read_csv("attenuation_factor_death_agesex.csv")
 bonf = 0.05/439
 
