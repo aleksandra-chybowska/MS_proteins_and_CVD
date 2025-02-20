@@ -47,14 +47,14 @@ for event in interesting_events:
     cox["sex"] = pd.Categorical(cox["sex"])
     cox_plotting = cox.copy()
 
-    cox = cox.query('age <= 69 and age >= 40') # filtering by age range before removing outliers
+    cox = cox.query('age <= 69 and age >= 40') # filtering by age range before removing outliers - 8428
 
     cox["HDL_cholesterol"] = outlier_trim(cox["HDL_cholesterol"], cut=4)
     cox["Total_cholesterol"] = outlier_trim(cox["Total_cholesterol"], cut=4)
     cox['bmi'] = np.where((cox['bmi'] < 18) | (cox['bmi'] > 50), np.NaN, np.log(cox['bmi']))
     cox['avg_sys'] = outlier_trim(cox["avg_sys"], cut=4)
     cox['pack_years'] = outlier_trim(np.log(cox["pack_years"]+1), cut=4)
-    cox.dropna(inplace=True) # 13173
+    cox.dropna(inplace=True) # 8343
 
     cph = CoxPHFitter()
     cph.fit(cox, duration_col='tte', event_col='event',

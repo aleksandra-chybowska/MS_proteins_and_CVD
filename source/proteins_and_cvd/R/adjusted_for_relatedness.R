@@ -56,7 +56,7 @@ full_mod = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol",
                   "+pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
 sig_proteins = ds %>% filter(formula == full_mod) %>% filter(p < bonf) 
 
-proteins = read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8332.csv')
+proteins = read_csv('results/cox/40-69/proteins_hosp_all_events_scaled_8343.csv')
 cols = c('id', sig_proteins$id)
 proteins = proteins[colnames(proteins) %in% cols] ## 38 unique names
 
