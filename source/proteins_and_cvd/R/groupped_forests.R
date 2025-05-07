@@ -2,11 +2,12 @@ library("ggplot2")
 library("tidyverse")
 library("data.table")
 
-setwd("C:/Users/s1654019/Projects/python/proteins/results/")
-results = "_old/incremental_parallel_correct/hosp/agesex/merged_results.csv"
+setwd("~/Projects/python/proteins/results/")
+results = "incremental_parallel/hosp/agesex/40-69/merged_results.csv"
 deaths = "_old/incremental_parallel_deaths/hosp/agesex/merged_results.csv"
 all = "incremental_parallel/hosp/agesex/40-69/merged_results.csv"
 flag = "all"
+type = "brain"
 # path = "/Cluster_Filespace/Marioni_Group/Ola/Smoking/BayesR_EpiScore/data/"
 # neuro_path = "/Cluster_Filespace/Marioni_Group/Ola/Smoking/Neuroimaging/"
 
@@ -36,14 +37,15 @@ if (flag == "all") {
 full_mod = paste0("age+sex+protein+avg_sys+Total_cholesterol+HDL_cholesterol",
                   "+pack_years+rheum_arthritis_Y+diabetes_Y+years+rank+on_pill")
 
-table(plotting$event)
-heart = c("chd_nos", "myocardial_infarction", "composite_CVD")
-brain = c("tia", "isch_stroke", "composite_CVD")
-death = c("death", "CVD_death")
+events = list(
+  heart = c("chd_nos", "myocardial_infarction", "composite_CVD"),
+  brain = c("tia", "isch_stroke", "composite_CVD"),
+  death = c("death", "CVD_death")
+)
 
 plotting = ds %>%
   filter(formula == full_mod) %>%
-  filter(event %in% death)
+  filter(event %in% events[[type]])
 
 sig_proteins = plotting %>% filter(p < bonf) # list of proteins that are significant in full models
 ids = sig_proteins$id
@@ -118,6 +120,6 @@ stacked = ggplot(out_cont,aes(y=Beta, x=Outcome, group=Predictor, colour=Predict
   coord_flip() + My_Theme + scale_colour_manual(values = color_scale)
 
 setwd("C:/Users/s1654019/Projects/python/proteins/plots/")
-pdf(paste0("Forest_plot_death.pdf"), height = 10, width = 8) # 12 and 5
+pdf(paste0("Forest_plot_", type, ".pdf"), height = 5, width = 9) # 12 and 5
 stacked
 dev.off()

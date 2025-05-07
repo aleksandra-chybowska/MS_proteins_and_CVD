@@ -11,7 +11,7 @@ diseases <- list(
   "mi" = "EFO_0000612",
   "tia" = "EFO_0003764",
   "chd" = "EFO_0001645",
-  "death" = "EFO_0004352"
+  "death" = "EFO_0005056"
 )
 
 # Define the GraphQL queries
@@ -165,7 +165,7 @@ parse_disease <- function(efoID, max_count, disease_name) {
 }
 
 # main  
-setwd("~")
+setwd("~/Projects/python/proteins/data/disease/open_targets")
 
 max_disease_count <- find_max_disease_count(diseases)
 cat(paste0("Max count:  ", max_disease_count,"\n"))

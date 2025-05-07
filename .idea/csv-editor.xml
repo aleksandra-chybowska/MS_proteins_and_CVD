@@ -178,6 +178,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\results\incremental_parallel\hosp\agesex\40-69-old\plotting_df_new.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\results\incremental_parallel\hosp\agesex\40-69\hf\A0A0A0MS14.csv">
           <value>
             <Attribute>
@@ -207,13 +214,6 @@
           </value>
         </entry>
         <entry key="\results\incremental_parallel\hosp\agesex\40-69\plotting_df_new.csv">
-          <value>
-            <Attribute>
-              <option name="separator" value="," />
-            </Attribute>
-          </value>
-        </entry>
-        <entry key="\results\incremental_parallel\hosp\agesex\40-69\report_pt2.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />
@@ -263,6 +263,13 @@
           </value>
         </entry>
         <entry key="\results\medications\agesex\hosp\medications_full_hf_agesex.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
+        <entry key="\results\proteins_that_vary_with_pill.csv">
           <value>
             <Attribute>
               <option name="separator" value="," />

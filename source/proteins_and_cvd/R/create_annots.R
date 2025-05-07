@@ -89,7 +89,7 @@ groups_df = merge(groups_df, groups_groupped, by="id", all.x=TRUE)
 
 # Nice! Now, get groups of isoforms. Add a (G) to their name. 
 groups_df$type = ifelse(groups_df$all_same_gene , "G", "PG")
-# write.csv(groups_df, "Debugging_DS.csv")
+write.csv(groups_df, "Debugging_DS.csv")
 
 # read a file with the current order of PGs, leave only PGs
 order = read.csv("order.csv") %>%
@@ -142,6 +142,8 @@ Gs = groups_named %>%
   
 # combine group annots into a single df
 group_annots = rbind(Gs, PGs)
+table(group_annots$Type)
+table(group_annots$Numbered_Type == "G")
 
 # select only name from unique 
 short_annots = group_annots %>% 
